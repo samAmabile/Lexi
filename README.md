@@ -1,6 +1,22 @@
 # Lexi Frame LLM and Natural Language Dataframe Compiler 
 ## Streamlined generation of LLM and human language and code
 
+*repo includes multiple different toolkits, with an example usecase combining all modules in main.py. 
+
+**TO INSTALL:
+
+``` bash
+git clone "https://github.com/samAmabile/Lexi.git"
+```
+**TO RUN:
+
+1. Ensure your Gemini API key is saved as environment variable called 'GEMINI\_API\_KEY' 
+2. Run:
+```bash
+python3 main.py
+```
+
+
 ### Modules:
 
 ### gemini.py
