@@ -1,21 +1,23 @@
 # Lexi Frame LLM and Natural Language Dataframe Compiler 
 ## Streamlined generation of LLM and human language and code
 
-*repo includes multiple different toolkits, with an example usecase combining all modules in main.py. 
+### *repo includes multiple different toolkits, with an example usecase combining all modules in main.py*
 
-**TO INSTALL:
+**TO INSTALL:**
 
 ``` bash
 git clone "https://github.com/samAmabile/Lexi.git"
 ```
-**TO RUN:
+
+**TO RUN:**
 
 1. Ensure your Gemini API key is saved as environment variable called 'GEMINI\_API\_KEY' 
+
 2. Run:
+
 ```bash
 python3 main.py
 ```
-
 
 ### Modules:
 
@@ -25,7 +27,7 @@ python3 main.py
 
 To Use:
 ``` 
-from geimini import Chat, Automate 
+from gemini import Chat, Automate 
 ```
 Offers both manual *(Chat)* and automated *(Automate)* chat with Gemini models, with automatic capture of history in a csv. 
 
@@ -56,7 +58,7 @@ Builds dataframe corpora from text (string) inputs with lexical, syntactic, and 
 
 To Use:
 ```
-from encorporate import Codecorps
+from encorporate import Codecorpus
 ```
 Builds dataframes of code with detailed analysis from *TreeSitter* and *Lizard* libraries
 
