@@ -1,0 +1,100 @@
+ **Weather CLI:** Create a script that takes a city name and fetches weather data via an API.
+ **Password Generator:** A tool that takes length and complexity constraints to output a secure string.
+ **CSV to JSON Converter:** A script that reads a local `.csv` and exports a formatted `.json`.
+ **Desktop Notifier:** A script that sends a system notification every 60 minutes to "Drink Water."
+ **URL Shortener:** Use a library like `pyshorteners` or logic to create a URL shortening tool.
+ **Expense Tracker:** A CLI tool to log expenses to a text file and calculate the monthly total.
+ **Recursive File Search:** A script that finds all `.pdf` files in a directory and its subdirectories.
+ **Basic Web Scraper:** Scrape a news site and print the top 5 headlines.
+ **Markdown to HTML:** A script that converts basic Markdown syntax (headings, bold) into HTML tags.
+ **Dice Simulator:** A program that simulates rolling $n$ dice and plots the frequency of results.
+ **Email Validator:** Use Regex to check if a user-provided string is a valid email format.
+ **Bulk File Renamer:** Rename all files in a folder by adding a prefix or a timestamp.
+ **Simple Chatbot:** A CLI tool that uses if-else logic to respond to "Hello," "Time," and "Bye."
+ **PDF Merger:** A script that takes two PDF files and combines them into one.
+ **Currency Converter:** Fetch real-time exchange rates to convert USD to EUR.
+ **Countdown Timer:** A script that takes seconds as input and beeps when the time is up.
+ **Frequency Counter:** Read a text file and print the top 10 most used words.
+ **Rock, Paper, Scissors:** A game against the computer with a score-tracking mechanism.
+ **Unit Converter:** A tool to convert Celsius to Fahrenheit, Meters to Feet, etc.
+ **Image Resizer:** Use `PIL` to resize all images in a folder to a specific width.
+ **Prime Factorizer:** A script that finds all prime factors of a given integer.
+ **Binary Search Visualizer:** Print the steps taken to find a number in a sorted list.
+ **To-Do List (CLI):** Add, view, and delete tasks stored in a `.txt` file.
+ **Number Guessing Game:** The computer picks a number; the user gets 5 tries to guess it.
+ **System Info Grabber:** Script that prints CPU usage, RAM, and Disk space.
+ **Bank Account System:** A class-based system with `Deposit`, `Withdraw`, and `Balance`.
+ **Linked List Implementation:** Create a custom Singly Linked List with `insert` and `delete` methods.
+ **Matrix Multiplier:** A program that multiplies two $N \times N$ matrices.
+ **Shape Hierarchy:** Use inheritance to calculate areas for `Circle`, `Rectangle`, and `Triangle`.
+ **Sudoku Solver:** A backtracking algorithm to solve a $9 \times 9$ Sudoku grid.
+ **Student Database:** Store student objects in a `std::vector` and sort them by GPA.
+ **Complex Number Calculator:** A class that handles addition/subtraction of complex numbers.
+ **File Encryption:** A simple XOR-based encryption/decryption tool for `.txt` files.
+ **Custom String Class:** Implement your own version of `std::string` with a constructor and destructor.
+ **Binary Search Tree (BST):** Build a BST and implement In-order traversal.
+ **Dijkstra’s Algorithm:** Find the shortest path between nodes in a small graph.
+ **Template Queue:** A generic Queue class that works with any data type.
+ **Contact Book:** Use a `std::map` to store and search names and phone numbers.
+ **Employee Payroll:** Calculate salary based on hours worked using polymorphism (Full-time vs. Part-time).
+ **Reverse Polish Notation (RPN):** A calculator using a stack to evaluate postfix expressions.
+ **Bubble Sort vs. Quick Sort:** Compare the execution time of both on a large array.
+ **Inventory Management:** A system to track product quantity and price using structs.
+ **Fraction Operator Overloader:** Overload `+` and `-` to work with custom Fraction objects.
+ **Palindrome Checker:** A C++ program that ignores spaces/punctuation to check for palindromes.
+ **Decimal to Hexadecimal:** A manual conversion script using a stack.
+ **Multi-threaded Counter:** Use `std::thread` to count to 1 million using two threads simultaneously.
+ **Login System:** Simple username/password verification using a hashed file.
+ **Vector Dot Product:** Calculate the dot product of two vectors of size $n$.
+ **Roman Numeral Converter:** Convert integers to Roman numerals (e.g., 14 to XIV).
+ **Smart Pointer Demo:** Implement a simple "Reference Counter" to mimic a smart pointer.
+ **Custom `malloc` wrapper:** A function that tracks how many bytes are currently allocated.
+ **Binary to Decimal:** Manual bit manipulation to convert binary strings to integers.
+ **String Reverser:** Reverse a string in-place using two pointers.
+ **Dynamic Array:** A program that grows an array using `realloc` as user input increases.
+ **Bitwise Flag System:** Use a single `char` to store 8 different "on/off" settings.
+ **Struct to File:** Save a struct's binary data to a file and read it back.
+ **Tower of Hanoi:** A recursive solution to the classic puzzle.
+ **Selection Sort:** Implement selection sort on an array of 20 integers.
+ **Factorial (Iterative vs Recursive):** Compare the memory usage for both.
+ **Word Counter:** Count words in a string by detecting whitespace transitions.
+ **Matrix Transpose:** Swap the rows and columns of a 2D array.
+ **Circular Buffer:** Implement a fixed-size queue that wraps around.
+ **C-string Library:** Re-implement `strlen`, `strcpy`, and `strcat` manually.
+ **Leap Year Checker:** Simple logic to determine if a year is a leap year.
+ **GCD Calculator:** Use the Euclidean Algorithm to find the Greatest Common Divisor.
+ **ASCII Art Generator:** Convert a user-input number into a "box" of stars.
+ **Pointer Arithmetic Demo:** Navigate an array using only pointers (no `[]` brackets).
+ **Simple Shell Logic:** A program that accepts commands and "executes" them (prints them back).
+ **Fibonacci Sequence:** Generate the first $n$ numbers using a loop.
+ **Endianness Checker:** Determine if a machine is Big-Endian or Little-Endian.
+ **Stack using Array:** A fixed-size stack with `push` and `pop` operations.
+ **Queue using Array:** A fixed-size queue with `enqueue` and `dequeue` operations.
+ **Merge Sort:** A standard implementation of the merge sort algorithm.
+ **Linear Regression (Simple):** Calculate the slope and intercept for a small set of $(x, y)$ points.
+ **Wait for Input:** A program that times how long a user takes to press 'Enter'.
+ **Personal Portfolio:** A single-page site with a bio, skills list, and contact form.
+ **Dark Mode Toggle:** A button that switches a page's theme using CSS variables.
+ **Calculator:** A grid-based UI that performs basic math using JavaScript.
+ **Weather Dashboard:** Use `fetch` to display a 5-day forecast.
+ **To-Do App:** A list where items can be crossed out and saved to `localStorage`.
+ **Modal Popup:** A "hidden" div that appears when a button is clicked, with an overlay.
+ **Digital Clock:** A real-time clock that updates every second.
+ **Accordion Menu:** A FAQ section where questions expand to show answers.
+ **Image Gallery:** A grid of images that enlarge when clicked (Light-box effect).
+ **Stopwatch:** Start, Stop, and Reset buttons with millisecond precision.
+ **Typing Speed Test:** A text box that calculates Words Per Minute as you type.
+ **Recipe Card:** A CSS-heavy project featuring a card with an image, ingredients, and hover effects.
+ **Random Quote Generator:** Pulls a random quote from an array and displays it.
+ **Form Validator:** Highlights input fields in red if they don't meet requirements (e.g., password length).
+ **Responsive Navbar:** A menu that collapses into a "hamburger" icon on mobile.
+ **Quiz App:** Multiple-choice questions that show a final score at the end.
+ **Color Palette Generator:** Generates 5 random HEX codes and displays them.
+ **Progress Bar:** A bar that fills up as the user scrolls down the page.
+ **Markdown Previewer:** A split-screen where left-side text renders as HTML on the right.
+ **Currency Converter UI:** Inputs for two currencies with a "Swap" button.
+ **Drum Kit:** Plays different sounds when specific keyboard keys are pressed.
+ **Analog Clock:** Use CSS transforms and JS to move clock hands.
+ **Memory Match Game:** A card-flipping game with 16 cards (8 pairs).
+ **Drag and Drop List:** Allow users to reorder list items via mouse.
+ **Particle Background:** Use HTML5 Canvas to create moving dots that react to the mouse.

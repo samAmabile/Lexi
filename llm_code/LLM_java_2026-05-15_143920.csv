@@ -1,0 +1,1021 @@
+src,loc,no. tokens,no. nodes,no. functions,avg variable length,max depth,control density,complexity,label,timestamp
+"// Eureka Server Configuration
+package com.example.eureka;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+//END EurekaServerApplication.java
+
+// API Gateway Configuration
+package com.example.gateway;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class GatewayApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class, args);
+    }
+
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route(""service-route"", r -> r.path(""/api/**"")
+                .filters(f -> f.circuitBreaker(c -> c.setName(""myCircuitBreaker"")))
+                .uri(""lb://service-provider""))
+            .build();
+    }
+}
+//END GatewayApplication.java
+
+// Service Provider with Resilience4j and Micrometer
+package com.example.service;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class ServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceApplication.class, args);
+    }
+
+    @GetMapping(""/api/data"")
+    @CircuitBreaker(name = ""backendA"", fallbackMethod = ""fallback"")
+    public String getData() {
+        return ""Data from Service"";
+    }
+
+    public String fallback(Exception e) {
+        return ""Fallback response"";
+    }
+}
+//END ServiceApplication.java
+
+// application.yml configuration
+/*
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      myCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        failureRateThreshold: 50
+*/
+//END application.yml",52,366,572,6,0.0,21,0.0,1.0,LLM,2026-05-15_1439
+"// Java Bytecode Analyzer and Optimizer using ASM library structure
+import java.io.*;
+import java.util.*;
+import org.objectweb.asm.*;
+import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.*;
+
+public class BytecodeOptimizer {
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1) return;
+        ClassReader reader = new ClassReader(new FileInputStream(args[0]));
+        ClassNode classNode = new ClassNode();
+        reader.accept(classNode, 0);
+        for (MethodNode method : classNode.methods) {
+            optimize(method);
+        }
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        classNode.accept(writer);
+        try (FileOutputStream fos = new FileOutputStream(""optimized_"" + args[0])) {
+            fos.write(writer.toByteArray());
+        }
+    }
+
+    public static void optimize(MethodNode method) {
+        boolean changed = true;
+        while (changed) {
+            changed = foldConstants(method);
+            changed |= eliminateDeadCode(method);
+        }
+    }
+
+    private static boolean foldConstants(MethodNode method) {
+        boolean changed = false;
+        InsnList instructions = method.instructions;
+        for (AbstractInsnNode insn = instructions.getFirst(); insn != null; insn = insn.getNext()) {
+            if (insn.getOpcode() == Opcodes.IADD && insn.getPrevious() != null && insn.getPrevious().getPrevious() != null) {
+                AbstractInsnNode prev1 = insn.getPrevious();
+                AbstractInsnNode prev2 = prev1.getPrevious();
+                if (isPush(prev1) && isPush(prev2)) {
+                    int val1 = getPushValue(prev1);
+                    int val2 = getPushValue(prev2);
+                    instructions.remove(prev2);
+                    instructions.remove(prev1);
+                    instructions.set(insn, new LdcInsnNode(val1 + val2));
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+
+    private static boolean eliminateDeadCode(MethodNode method) {
+        boolean changed = false;
+        InsnList instructions = method.instructions;
+        for (AbstractInsnNode insn = instructions.getFirst(); insn != null; ) {
+            AbstractInsnNode next = insn.getNext();
+            if (insn.getOpcode() == Opcodes.NOP) {
+                instructions.remove(insn);
+                changed = true;
+            }
+            insn = next;
+        }
+        return changed;
+    }
+
+    private static boolean isPush(AbstractInsnNode insn) {
+        int op = insn.getOpcode();
+        return (op >= Opcodes.ICONST_M1 && op <= Opcodes.ICONST_5) || op == Opcodes.BIPUSH || op == Opcodes.SIPUSH || op == Opcodes.LDC;
+    }
+
+    private static int getPushValue(AbstractInsnNode insn) {
+        int op = insn.getOpcode();
+        if (op >= Opcodes.ICONST_M1 && op <= Opcodes.ICONST_5) return op - Opcodes.ICONST_0;
+        if (insn instanceof IntInsnNode) return ((IntInsnNode) insn).operand;
+        if (insn instanceof LdcInsnNode) return (Integer) ((LdcInsnNode) insn).cst;
+        return 0;
+    }
+}
+//END BytecodeOptimizer.java",71,583,862,6,6.625,18,0.16901408450704225,4.166666666666667,LLM,2026-05-15_1439
+"// Java implementation of a minimal IMAP/SMTP server framework with TLS and plugin hooks
+import java.net.*;
+import java.io.*;
+import javax.net.ssl.*;
+import java.util.*;
+
+public class MailServer {
+    private static final int SMTP_PORT = 25;
+    private static final int IMAP_PORT = 143;
+
+    public static void main(String[] args) {
+        new Thread(() -> startServer(SMTP_PORT, ""SMTP"")).start();
+        new Thread(() -> startServer(IMAP_PORT, ""IMAP"")).start();
+    }
+
+    private static void startServer(int port, String protocol) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            while (true) {
+                Socket client = serverSocket.accept();
+                new Thread(new MailHandler(client, protocol)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class MailHandler implements Runnable {
+    private Socket socket;
+    private String protocol;
+    private List<MailPlugin> plugins = new ArrayList<>();
+
+    public MailHandler(Socket socket, String protocol) {
+        this.socket = socket;
+        this.protocol = protocol;
+        plugins.add(new SpamFilter());
+    }
+
+    @Override
+    public void run() {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            out.println(""220 Welcome to JavaMailServer"");
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.startsWith(""AUTH XOAUTH2"")) {
+                    out.println(""235 Authentication successful"");
+                } else if (line.startsWith(""QUIT"")) {
+                    out.println(""221 Bye"");
+                    break;
+                }
+                for (MailPlugin p : plugins) p.process(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+interface MailPlugin {
+    void process(String data);
+}
+
+class SpamFilter implements MailPlugin {
+    public void process(String data) {
+        if (data.contains(""SPAM"")) System.out.println(""Spam detected"");
+    }
+}
+//END MailServer.java",59,411,643,6,6.428571428571429,17,0.13559322033898305,2.6,LLM,2026-05-15_1439
+"// BillingPlatform.java - Jakarta EE and Hibernate SaaS Billing Core
+import jakarta.persistence.*;
+import jakarta.ejb.*;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = ""tenants"")
+class Tenant {
+    @Id private UUID id;
+    private String name;
+}
+
+@Entity
+@Table(name = ""subscriptions"")
+class Subscription {
+    @Id private UUID id;
+    @ManyToOne private Tenant tenant;
+    private BigDecimal amount;
+    private String status;
+}
+
+@Stateless
+class TaxCalculator {
+    public BigDecimal calculateTax(BigDecimal amount) {
+        return amount.multiply(new BigDecimal(""0.08""));
+    }
+}
+
+@Singleton
+@Startup
+class InvoiceGenerator {
+    @Asynchronous
+    public void generatePdf(UUID subscriptionId) {
+        // PDF generation logic using iText or Apache FOP
+        System.out.println(""Generating PDF for subscription: "" + subscriptionId);
+    }
+}
+
+@Stateless
+class BillingService {
+    @PersistenceContext private EntityManager em;
+    @EJB private TaxCalculator taxCalculator;
+    @EJB private InvoiceGenerator invoiceGenerator;
+
+    public void processBilling(UUID subId) {
+        Subscription sub = em.find(Subscription.class, subId);
+        BigDecimal tax = taxCalculator.calculateTax(sub.getAmount());
+        invoiceGenerator.generatePdf(subId);
+    }
+}
+//END BillingPlatform.java",45,225,360,3,5.538461538461538,12,0.0,1.0,LLM,2026-05-15_1439
+"// Distributed search engine with crawler, inverted index, and TF-IDF ranking
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.net.URL;
+import java.io.*;
+
+class SearchEngine {
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> index = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Integer> docLengths = new ConcurrentHashMap<>();
+    private final AtomicInteger totalDocs = new AtomicInteger(0);
+
+    public void indexDocument(String docId, String content) {
+        String[] tokens = content.toLowerCase().split(""\\W+"");
+        docLengths.put(docId, tokens.length);
+        for (String token : tokens) {
+            index.computeIfAbsent(token, k -> new ConcurrentHashMap<>())
+                 .merge(docId, 1, Integer::sum);
+        }
+        totalDocs.incrementAndGet();
+    }
+
+    public Map<String, Double> search(String query) {
+        String[] terms = query.toLowerCase().split(""\\W+"");
+        Map<String, Double> scores = new HashMap<>();
+        for (String term : terms) {
+            if (!index.containsKey(term)) continue;
+            double idf = Math.log((double) totalDocs.get() / (1 + index.get(term).size()));
+            index.get(term).forEach((docId, tf) -> {
+                double score = (double) tf / docLengths.get(docId) * idf;
+                scores.merge(docId, score, Double::sum);
+            });
+        }
+        return scores;
+    }
+}
+
+class Crawler {
+    private final SearchEngine engine;
+    private final Set<String> visited = ConcurrentHashMap.newKeySet();
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+
+    public Crawler(SearchEngine engine) { this.engine = engine; }
+
+    public void crawl(String url) {
+        executor.submit(() -> {
+            if (visited.add(url)) {
+                try {
+                    Thread.sleep(1000); // Rate limiting
+                    String content = fetchContent(url);
+                    engine.indexDocument(url, content);
+                } catch (Exception e) { }
+            }
+        });
+    }
+
+    private String fetchContent(String url) throws IOException {
+        try (Scanner scanner = new Scanner(new URL(url).openStream())) {
+            StringBuilder sb = new StringBuilder();
+            while (scanner.hasNext()) sb.append(scanner.next()).append("" "");
+            return sb.toString();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SearchEngine engine = new SearchEngine();
+        Crawler crawler = new Crawler(engine);
+        crawler.crawl(""http://example.com"");
+    }
+}",63,552,829,6,6.105263157894737,19,0.09523809523809523,2.0,LLM,2026-05-15_1439
+"// Java implementation of a PBFT-based blockchain with Merkle verification and ECDSA
+import java.security.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Transaction {
+    public String sender;
+    public String receiver;
+    public double amount;
+    public byte[] signature;
+
+    public Transaction(String sender, String receiver, double amount) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+    }
+
+    public String getData() {
+        return sender + receiver + amount;
+    }
+}
+
+class Block {
+    public int index;
+    public long timestamp;
+    public List<Transaction> transactions;
+    public String previousHash;
+    public String merkleRoot;
+    public String hash;
+
+    public Block(int index, List<Transaction> transactions, String previousHash) {
+        this.index = index;
+        this.transactions = transactions;
+        this.previousHash = previousHash;
+        this.timestamp = System.currentTimeMillis();
+        this.merkleRoot = calculateMerkleRoot();
+        this.hash = calculateHash();
+    }
+
+    public String calculateMerkleRoot() {
+        List<String> hashes = transactions.stream().map(t -> t.getData()).collect(Collectors.toList());
+        return String.valueOf(hashes.hashCode());
+    }
+
+    public String calculateHash() {
+        return Integer.toHexString(Objects.hash(index, timestamp, merkleRoot, previousHash));
+    }
+}
+
+class PBFTNode {
+    private int nodeId;
+    private List<Block> blockchain = new ArrayList<>();
+    private Set<String> preparedMessages = new HashSet<>();
+
+    public PBFTNode(int nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public boolean validateBlock(Block block) {
+        return block.hash.startsWith(""0"");
+    }
+
+    public void broadcastPrePrepare(Block block) {
+        System.out.println(""Node "" + nodeId + "" broadcasting pre-prepare for block "" + block.index);
+    }
+}
+
+public class BlockchainEngine {
+    public static void main(String[] args) throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(""EC"");
+        KeyPair pair = keyGen.generateKeyPair();
+        
+        List<Transaction> txs = new ArrayList<>();
+        txs.add(new Transaction(""Alice"", ""Bob"", 50.0));
+        
+        Block genesis = new Block(0, txs, ""0"");
+        PBFTNode node = new PBFTNode(1);
+        
+        if(node.validateBlock(genesis)) {
+            System.out.println(""Block validated via PBFT logic. Hash: "" + genesis.hash);
+        }
+    }
+}",67,467,742,9,7.043478260869565,14,0.014925373134328358,1.1111111111111112,LLM,2026-05-15_1439
+"// WorkflowEngine.java - A minimal BPMN-inspired workflow engine with JPA persistence and task management
+import javax.persistence.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+@Entity
+class WorkflowInstance {
+    @Id @GeneratedValue private Long id;
+    private String state;
+    private String currentTask;
+    public Long getId() { return id; }
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+}
+
+@Entity
+class HumanTask {
+    @Id @GeneratedValue private Long id;
+    private String taskName;
+    private boolean completed;
+    public void setCompleted(boolean completed) { this.completed = completed; }
+}
+
+class WorkflowEngine {
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory(""WorkflowPU"");
+
+    public void executeTask(Long instanceId, Runnable task) {
+        executor.submit(() -> {
+            EntityManager em = emf.createEntityManager();
+            em.getTransaction().begin();
+            try {
+                task.run();
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                em.getTransaction().rollback();
+            } finally {
+                em.close();
+            }
+        });
+    }
+
+    public void completeHumanTask(Long taskId) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        HumanTask task = em.find(HumanTask.class, taskId);
+        task.setCompleted(true);
+        em.getTransaction().commit();
+        em.close();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        WorkflowEngine engine = new WorkflowEngine();
+        System.out.println(""Workflow Engine Initialized"");
+    }
+}
+//END WorkflowEngine.java",51,331,511,7,5.5,18,0.0,1.1428571428571428,LLM,2026-05-15_1439
+"// Java static analysis tool for SQLi and XSS detection using AST parsing
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+public class SimpleSAST {
+    private static final List<String> SQL_SINKS = Arrays.asList(""executeQuery"", ""executeUpdate"", ""prepareStatement"");
+    private static final List<String> XSS_SINKS = Arrays.asList(""println"", ""write"", ""print"");
+
+    public static void main(String[] args) throws Exception {
+        File projectDir = new File(""src/main/java"");
+        analyzeDirectory(projectDir);
+    }
+
+    private static void analyzeDirectory(File dir) throws Exception {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) analyzeDirectory(file);
+            else if (file.getName().endsWith("".java"")) {
+                CompilationUnit cu = StaticJavaParser.parse(file);
+                cu.findAll(MethodDeclaration.class).forEach(method -> {
+                    method.findAll(MethodCallExpr.class).forEach(call -> {
+                        checkVulnerabilities(call, method);
+                    });
+                });
+            }
+        }
+    }
+
+    private static void checkVulnerabilities(MethodCallExpr call, MethodDeclaration method) {
+        String methodName = call.getNameAsString();
+        
+        if (SQL_SINKS.contains(methodName)) {
+            call.getArguments().forEach(arg -> {
+                if (isTainted(arg, method)) {
+                    System.out.println(""VULNERABILITY: Potential SQL Injection in "" + method.getNameAsString() + "" at line "" + call.getBegin().get().line);
+                }
+            });
+        }
+
+        if (XSS_SINKS.contains(methodName)) {
+            call.getArguments().forEach(arg -> {
+                if (isTainted(arg, method)) {
+                    System.out.println(""VULNERABILITY: Potential XSS in "" + method.getNameAsString() + "" at line "" + call.getBegin().get().line);
+                }
+            });
+        }
+    }
+
+    private static boolean isTainted(Object expr, MethodDeclaration method) {
+        String source = expr.toString();
+        // Taint tracking: check if argument comes from method parameters (HTTP request inputs)
+        return method.getParameters().stream().anyMatch(p -> p.getNameAsString().equals(source));
+    }
+}",49,446,688,4,6.0,24,0.14285714285714285,2.75,LLM,2026-05-15_1439
+"// Low-latency trading engine using LMAX Disruptor pattern and Java 21 Virtual Threads
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.EventFactory;
+import java.util.concurrent.Executors;
+
+public class TradingEngine {
+
+    public static class OrderEvent {
+        private long orderId;
+        private double price;
+        private int quantity;
+
+        public void set(long id, double p, int q) {
+            this.orderId = id;
+            this.price = p;
+            this.quantity = q;
+        }
+    }
+
+    public static void main(String[] args) {
+        int bufferSize = 1024;
+        Disruptor<OrderEvent> disruptor = new Disruptor<>(
+            OrderEvent::new,
+            bufferSize,
+            Executors.defaultThreadFactory()
+        );
+
+        disruptor.handleEventsWith((event, sequence, endOfBatch) -> {
+            Thread.ofVirtual().start(() -> processOrder(event));
+        });
+
+        RingBuffer<OrderEvent> ringBuffer = disruptor.start();
+
+        long seq = ringBuffer.next();
+        try {
+            OrderEvent event = ringBuffer.get(seq);
+            event.set(1001, 150.25, 10);
+        } finally {
+            ringBuffer.publish(seq);
+        }
+    }
+
+    private static void processOrder(OrderEvent event) {
+        // Logic for matching engine execution
+    }
+}",37,233,356,3,5.785714285714286,17,0.0,1.0,LLM,2026-05-15_1439
+"// LSTM Anomaly Detection Pipeline using Deeplearning4j
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.LSTM;
+import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.weights.WeightInit;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
+
+public class AnomalyDetectionPipeline {
+    public static void main(String[] args) {
+        int inputSize = 1;
+        int hiddenLayerSize = 50;
+        int outputSize = 1;
+
+        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
+            .seed(123)
+            .updater(new Adam(0.005))
+            .weightInit(WeightInit.XAVIER)
+            .list()
+            .layer(0, new LSTM.Builder().nIn(inputSize).nOut(hiddenLayerSize).activation(Activation.TANH).build())
+            .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                .activation(Activation.IDENTITY)
+                .nIn(hiddenLayerSize).nOut(outputSize).build())
+            .build();
+
+        MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();
+
+        // Dummy time-series data: 10 sequences, 5 time steps, 1 feature
+        DataSet trainingData = new DataSet(Nd4j.rand(10, 1, 5), Nd4j.rand(10, 1, 5));
+
+        for (int i = 0; i < 100; i++) {
+            model.fit(trainingData);
+        }
+
+        // Anomaly detection: Calculate reconstruction error
+        double threshold = 0.5;
+        for (int i = 0; i < 10; i++) {
+            double error = model.score(trainingData.get(i));
+            if (error > threshold) {
+                System.out.println(""Anomaly detected at index "" + i + "" with error: "" + error);
+            }
+        }
+    }
+}",41,395,583,1,7.428571428571429,19,0.07317073170731707,4.0,LLM,2026-05-15_1439
+"// Distributed File System implementation with Master, ChunkServer, and Client components
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+// Master Server managing metadata and chunk locations
+class MasterServer {
+    private Map<String, List<String>> fileMetadata = new ConcurrentHashMap<>();
+    private List<String> chunkServers = new CopyOnWriteArrayList<>();
+
+    public void start(int port) throws IOException {
+        ServerSocket server = new ServerSocket(port);
+        while (true) {
+            Socket client = server.accept();
+            new Thread(() -> handleRequest(client)).start();
+        }
+    }
+
+    private void handleRequest(Socket socket) {
+        try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+            String command = (String) in.readObject();
+            if (""GET_LOC"".equals(command)) {
+                String filename = (String) in.readObject();
+                out.writeObject(fileMetadata.getOrDefault(filename, new ArrayList<>()));
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+}
+
+// Chunk Server for data storage
+class ChunkServer {
+    private String storageDir;
+    public ChunkServer(String dir) { this.storageDir = dir; }
+
+    public void start(int port) throws IOException {
+        ServerSocket server = new ServerSocket(port);
+        while (true) {
+            Socket client = server.accept();
+            new Thread(() -> handleData(client)).start();
+        }
+    }
+
+    private void handleData(Socket socket) {
+        try (DataInputStream in = new DataInputStream(socket.getInputStream())) {
+            String chunkId = in.readUTF();
+            byte[] data = new byte[in.readInt()];
+            in.readFully(data);
+            FileOutputStream fos = new FileOutputStream(storageDir + ""/"" + chunkId);
+            fos.write(data);
+            fos.close();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+}
+
+// Client Library for transparent file access
+class DFSClient {
+    private String masterHost;
+    private int masterPort;
+
+    public DFSClient(String host, int port) {
+        this.masterHost = host;
+        this.masterPort = port;
+    }
+
+    public void write(String filename, byte[] data) throws Exception {
+        List<String> servers = getLocations(filename);
+        for (String serverAddr : servers) {
+            String[] parts = serverAddr.split("":"");
+            try (Socket s = new Socket(parts[0], Integer.parseInt(parts[1]));
+                 DataOutputStream out = new DataOutputStream(s.getOutputStream())) {
+                out.writeUTF(filename + ""_chunk0"");
+                out.writeInt(data.length);
+                out.write(data);
+            } catch (IOException e) { continue; }
+        }
+    }
+
+    private List<String> getLocations(String filename) throws Exception {
+        try (Socket s = new Socket(masterHost, masterPort);
+             ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(s.getInputStream())) {
+            out.writeObject(""GET_LOC"");
+            out.writeObject(filename);
+            return (List<String>) in.readObject();
+        }
+    }
+}",75,631,964,8,7.083333333333333,18,0.08,1.875,LLM,2026-05-15_1439
+"// ERP Backend with Spring Data JPA, Querydsl, RBAC, and SAP JCo integration
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import com.sap.conn.jco.*;
+import javax.persistence.*;
+
+@Entity
+public class InventoryItem {
+    @Id @GeneratedValue private Long id;
+    private String sku;
+    private Integer quantity;
+}
+
+public interface InventoryRepository extends JpaRepository<InventoryItem, Long>, QuerydslPredicateExecutor<InventoryItem> {}
+
+@Service
+public class SapIntegrationService {
+    public void syncWithSap(String destinationName) throws JCoException {
+        JCoDestination destination = JCoDestinationManager.getDestination(destinationName);
+        JCoFunction function = destination.getRepository().getFunction(""BAPI_MATERIAL_AVAILABILITY"");
+        if (function != null) {
+            function.execute(destination);
+        }
+    }
+}
+
+@Service
+public class ReportService {
+    private final InventoryRepository repository;
+    public ReportService(InventoryRepository repository) { this.repository = repository; }
+    
+    @PreAuthorize(""hasRole('ADMIN')"")
+    public Iterable<InventoryItem> generateDynamicReport(com.querydsl.core.types.Predicate predicate) {
+        return repository.findAll(predicate);
+    }
+}
+
+//END ERPBackend.java",32,220,340,3,7.75,11,0.03125,1.3333333333333333,LLM,2026-05-15_1439
+"// Netty-based multiplayer game server with spatial partitioning and delta compression
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import java.util.*;
+import java.util.concurrent.*;
+
+class Entity {
+    int id;
+    float x, y;
+    byte[] lastState;
+    public Entity(int id, float x, float y) { this.id = id; this.x = x; this.y = y; }
+}
+
+class SpatialGrid {
+    private final Map<Integer, List<Entity>> grid = new ConcurrentHashMap<>();
+    private final float cellSize = 100.0f;
+
+    public void update(Entity e) {
+        int gx = (int)(e.x / cellSize);
+        int gy = (int)(e.y / cellSize);
+        int key = Objects.hash(gx, gy);
+        grid.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>()).add(e);
+    }
+}
+
+class GameServer {
+    private final SpatialGrid world = new SpatialGrid();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    public void start(int port) throws Exception {
+        EventLoopGroup boss = new NioEventLoopGroup(1);
+        EventLoopGroup worker = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(boss, worker).channel(NioServerSocketChannel.class)
+             .childHandler(new ChannelInitializer<SocketChannel>() {
+                 @Override
+                 public void initChannel(SocketChannel ch) {
+                     ch.pipeline().addLast(new GameHandler());
+                 }
+             });
+            b.bind(port).sync().channel().closeFuture().sync();
+        } finally {
+            boss.shutdownGracefully();
+            worker.shutdownGracefully();
+        }
+    }
+
+    private void tick() {
+        // Delta compression logic: compare current state with lastState
+        // Broadcast updates to relevant clients based on spatial grid
+    }
+}
+
+class GameHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        // Process incoming client inputs
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        new GameServer().start(8080);
+    }
+}",57,432,661,7,2.875,20,0.0,1.0,LLM,2026-05-15_1439
+"// Simple distributed message broker using Java NIO and Zookeeper integration
+import java.io.*;
+import java.net.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class MessageBroker {
+    private static final int PORT = 9090;
+    private Selector selector;
+    private ServerSocketChannel serverChannel;
+    private ConcurrentLinkedQueue<byte[]> messageQueue = new ConcurrentLinkedQueue<>();
+
+    public void start() throws IOException {
+        selector = Selector.open();
+        serverChannel = ServerSocketChannel.open();
+        serverChannel.bind(new InetSocketAddress(PORT));
+        serverChannel.configureBlocking(false);
+        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+        while (true) {
+            selector.select();
+            Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
+            while (keys.hasNext()) {
+                SelectionKey key = keys.next();
+                keys.remove();
+                if (key.isAcceptable()) handleAccept();
+                if (key.isReadable()) handleRead(key);
+            }
+        }
+    }
+
+    private void handleAccept() throws IOException {
+        SocketChannel client = serverChannel.accept();
+        client.configureBlocking(false);
+        client.register(selector, SelectionKey.OP_READ);
+    }
+
+    private void handleRead(SelectionKey key) throws IOException {
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        int read = client.read(buffer);
+        if (read == -1) {
+            client.close();
+        } else {
+            messageQueue.add(buffer.array());
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        new MessageBroker().start();
+    }
+}
+//END MessageBroker.java
+//ZookeeperLeaderElection.java
+import org.apache.zookeeper.*;
+import java.io.IOException;
+
+public class ZookeeperLeaderElection implements Watcher {
+    private ZooKeeper zk;
+    private String znode = ""/broker-leader"";
+
+    public void connect() throws IOException {
+        zk = new ZooKeeper(""localhost:2181"", 3000, this);
+    }
+
+    public void attemptElection() throws KeeperException, InterruptedException {
+        try {
+            zk.create(znode, ""leader"".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+            System.out.println(""Elected as leader"");
+        } catch (KeeperException.NodeExistsException e) {
+            System.out.println(""Follower mode"");
+        }
+    }
+
+    public void process(WatchedEvent event) {}
+}
+//END ZookeeperLeaderElection.java",65,473,726,7,7.071428571428571,14,0.1076923076923077,1.8571428571428572,LLM,2026-05-15_1439
+"// Simple LSM-Tree Key-Value Store implementation in Java
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
+
+public class LSMStore {
+    private final ConcurrentSkipListMap<String, String> memTable = new ConcurrentSkipListMap<>();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final String walPath = ""store.wal"";
+    private final int memTableThreshold = 1000;
+
+    public void put(String key, String value) throws IOException {
+        lock.writeLock().lock();
+        try {
+            writeToWAL(key, value);
+            memTable.put(key, value);
+            if (memTable.size() >= memTableThreshold) {
+                flushToSSTable();
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    public String get(String key) {
+        lock.readLock().lock();
+        try {
+            String val = memTable.get(key);
+            if (val != null) return val;
+            return searchSSTables(key);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void writeToWAL(String key, String value) throws IOException {
+        try (FileWriter fw = new FileWriter(walPath, true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+            bw.write(key + "":"" + value + ""\n"");
+        }
+    }
+
+    private void flushToSSTable() throws IOException {
+        String fileName = ""sst_"" + System.currentTimeMillis() + "".db"";
+        try (PrintWriter out = new PrintWriter(new FileWriter(fileName))) {
+            for (Map.Entry<String, String> entry : memTable.entrySet()) {
+                out.println(entry.getKey() + "":"" + entry.getValue());
+            }
+        }
+        memTable.clear();
+        new File(walPath).delete();
+    }
+
+    private String searchSSTables(String key) {
+        File dir = new File(""."");
+        File[] files = dir.listFiles((d, name) -> name.startsWith(""sst_""));
+        if (files == null) return null;
+        Arrays.sort(files, (a, b) -> b.getName().compareTo(a.getName()));
+        for (File file : files) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split("":"");
+                    if (parts[0].equals(key)) return parts[1];
+                }
+            } catch (IOException e) { continue; }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        LSMStore store = new LSMStore();
+        store.put(""user:1"", ""Alice"");
+        System.out.println(""Get user:1 -> "" + store.get(""user:1""));
+    }
+}",69,569,875,6,5.857142857142857,17,0.11594202898550725,2.3333333333333335,LLM,2026-05-15_1439

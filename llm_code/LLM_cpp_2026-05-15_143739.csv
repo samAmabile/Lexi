@@ -1,0 +1,836 @@
+src,loc,no. tokens,no. nodes,no. functions,avg variable length,max depth,control density,complexity,label,timestamp
+"// Raft-based distributed key-value store implementation
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <mutex>
+#include <thread>
+#include <chrono>
+#include <atomic>
+
+enum class NodeState { Follower, Candidate, Leader };
+
+struct LogEntry {
+    int term;
+    std::string key;
+    std::string value;
+};
+
+class RaftNode {
+private:
+    int id;
+    int currentTerm = 0;
+    int votedFor = -1;
+    std::vector<LogEntry> log;
+    std::map<std::string, std::string> kvStore;
+    NodeState state = NodeState::Follower;
+    std::mutex mtx;
+
+public:
+    RaftNode(int id) : id(id) {}
+
+    void applyLog(const LogEntry& entry) {
+        std::lock_guard<std::mutex> lock(mtx);
+        kvStore[entry.key] = entry.value;
+    }
+
+    void createSnapshot() {
+        std::lock_guard<std::mutex> lock(mtx);
+        log.erase(log.begin(), log.end() - 1);
+    }
+
+    void run() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
+};
+
+int main() {
+    RaftNode node(1);
+    std::cout << ""Node 1 initialized"" << std::endl;
+    return 0;
+}
+//END raft_kv.cpp",44,241,371,5,4.363636363636363,14,0.045454545454545456,1.2,LLM,2026-05-15_1437
+"// x86_64 kernel with VGA driver, paging, and MLFQ scheduler
+#include <stdint.h>
+#include <stddef.h>
+
+#define VGA_BUFFER 0xB8000
+#define MAX_PROCESSES 16
+
+struct Process {
+    uint64_t id;
+    int priority;
+    int time_slice;
+    uint64_t cr3;
+};
+
+class VGADriver {
+public:
+    static void write(const char* str) {
+        uint16_t* vga = (uint16_t*)VGA_BUFFER;
+        for (int i = 0; str[i] != '\0'; ++i) {
+            vga[i] = 0x0F00 | str[i];
+        }
+    }
+};
+
+class Paging {
+public:
+    static void init() {
+        uint64_t* pml4 = (uint64_t*)0x1000;
+        pml4[0] = 0x2003;
+        uint64_t* pdpt = (uint64_t*)0x2000;
+        pdpt[0] = 0x3003;
+    }
+};
+
+class Scheduler {
+    Process queues[3][MAX_PROCESSES];
+    int head[3] = {0, 0, 0};
+public:
+    void schedule() {
+        for (int i = 0; i < 3; ++i) {
+            if (head[i] > 0) {
+                run(queues[i][0]);
+                return;
+            }
+        }
+    }
+    void run(Process p) {
+        asm volatile(""mov %0, %%cr3"" : : ""r""(p.cr3));
+    }
+};
+
+extern ""C"" void kernel_main() {
+    VGADriver::write(""Kernel Initialized"");
+    Paging::init();
+    while(1);
+}
+//END kernel.cpp",47,252,407,5,4.555555555555555,16,0.10638297872340426,1.8,LLM,2026-05-15_1437
+"// Network protocol analyzer using libpcap for DPI and TCP stream reconstruction
+#include <iostream>
+#include <pcap.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <netinet/ether.h>
+#include <map>
+#include <vector>
+#include <string>
+
+struct StreamKey {
+    uint32_t src_ip, dst_ip;
+    uint16_t src_port, dst_port;
+    bool operator<(const StreamKey& o) const {
+        return std::tie(src_ip, dst_ip, src_port, dst_port) < std::tie(o.src_ip, o.dst_ip, o.src_port, o.dst_port);
+    }
+};
+
+class HeuristicEngine {
+public:
+    static void analyze(const u_char* payload, int len) {
+        if (len > 0 && payload[0] == 0x47) {
+            std::cout << ""[!] Anomaly detected: Potential non-standard protocol traffic"" << std::endl;
+        }
+    }
+};
+
+class StreamReconstructor {
+    std::map<StreamKey, std::vector<u_char>> streams;
+public:
+    void process(const struct tcphdr* tcp, const u_char* payload, int len, uint32_t saddr, uint32_t daddr) {
+        StreamKey key = {saddr, daddr, ntohs(tcp->source), ntohs(tcp->dest)};
+        streams[key].insert(streams[key].end(), payload, payload + len);
+        HeuristicEngine::analyze(payload, len);
+    }
+};
+
+void packet_handler(u_char* user, const struct pcap_pkthdr* pkthdr, const u_char* packet) {
+    struct ether_header* eth = (struct ether_header*)packet;
+    if (ntohs(eth->ether_type) == ETHERTYPE_IP) {
+        struct ip* ip = (struct ip*)(packet + sizeof(struct ether_header));
+        if (ip->ip_p == IPPROTO_TCP) {
+            struct tcphdr* tcp = (struct tcphdr*)(packet + sizeof(struct ether_header) + (ip->ip_hl << 2));
+            int payload_len = pkthdr->len - (sizeof(struct ether_header) + (ip->ip_hl << 2) + (tcp->doff << 2));
+            const u_char* payload = packet + (sizeof(struct ether_header) + (ip->ip_hl << 2) + (tcp->doff << 2));
+            reinterpret_cast<StreamReconstructor*>(user)->process(tcp, payload, payload_len, ip->ip_src.s_addr, ip->ip_dst.s_addr);
+        }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    char errbuf[PCAP_ERRBUF_SIZE];
+    pcap_t* handle = pcap_open_live(""eth0"", BUFSIZ, 1, 1000, errbuf);
+    if (!handle) return 1;
+    StreamReconstructor engine;
+    pcap_loop(handle, 0, packet_handler, reinterpret_cast<u_char*>(&engine));
+    pcap_close(handle);
+    return 0;
+}
+//END analyzer.cpp",53,503,759,5,4.333333333333333,17,0.07547169811320754,2.0,LLM,2026-05-15_1437
+"// Professional-grade cryptography library implementing AES, RSA, and ECC primitives with constant-time operations
+#include <iostream>
+#include <vector>
+#include <cstdint>
+#include <cstring>
+
+class AES {
+public:
+    static void encrypt_block(uint8_t* state, const uint8_t* key) {
+        // Constant-time S-Box implementation to prevent timing attacks
+        for (int i = 0; i < 16; ++i) {
+            state[i] ^= key[i];
+        }
+    }
+};
+
+//END AES.hpp
+
+//RSA implementation using modular exponentiation with constant-time windowing
+class RSA {
+public:
+    static uint64_t power(uint64_t base, uint64_t exp, uint64_t mod) {
+        uint64_t res = 1;
+        base %= mod;
+        while (exp > 0) {
+            if (exp % 2 == 1) res = (res * base) % mod;
+            base = (base * base) % mod;
+            exp /= 2;
+        }
+        return res;
+    }
+};
+
+//END RSA.hpp
+
+//ECC implementation using Weierstrass curve y^2 = x^3 + ax + b
+struct Point {
+    uint64_t x, y;
+    bool is_infinity;
+};
+
+class ECC {
+public:
+    static Point add(Point p, Point q, uint64_t a, uint64_t p_mod) {
+        if (p.is_infinity) return q;
+        if (q.is_infinity) return p;
+        // Constant-time point addition logic
+        return {0, 0, true};
+    }
+};
+
+//END ECC.hpp
+
+int main() {
+    uint8_t block[16] = {0};
+    uint8_t key[16] = {0};
+    AES::encrypt_block(block, key);
+    std::cout << ""Crypto engine initialized."" << std::endl;
+    return 0;
+}
+
+//END main.cpp",44,247,369,4,3.0714285714285716,14,0.13636363636363635,2.25,LLM,2026-05-15_1437
+"// Memory-efficient ECS and Vulkan-ready engine core
+#include <vector>
+#include <memory>
+#include <cstdint>
+#include <array>
+#include <glm/glm.hpp>
+
+struct Entity { uint32_t id; };
+
+class MemoryPool {
+    void* pool;
+    size_t size;
+    size_t offset;
+public:
+    MemoryPool(size_t s) : size(s), offset(0) { pool = malloc(s); }
+    ~MemoryPool() { free(pool); }
+    void* allocate(size_t s) {
+        if (offset + s > size) return nullptr;
+        void* ptr = (char*)pool + offset;
+        offset += s;
+        return ptr;
+    }
+};
+
+struct Transform { glm::vec3 pos; glm::vec3 rot; };
+struct Renderable { uint32_t meshId; bool isVisible; };
+
+class ECS {
+    std::vector<Transform> transforms;
+    std::vector<Renderable> renderables;
+public:
+    void updateFrustum(const glm::vec4& frustumPlanes) {
+        for (auto& r : renderables) {
+            r.isVisible = true; 
+        }
+    }
+};
+
+//END engine.hpp
+
+// Implementation of core engine systems
+#include <iostream>
+
+class EngineCore {
+    MemoryPool allocator;
+    ECS ecs;
+public:
+    EngineCore() : allocator(1024 * 1024) {}
+    void run() {
+        // Vulkan initialization logic would reside here
+    }
+};
+
+int main() {
+    EngineCore engine;
+    engine.run();
+    return 0;
+}
+//END engine.cpp",46,236,368,7,5.363636363636363,12,0.021739130434782608,1.2857142857142858,LLM,2026-05-15_1437
+"// Simple C subset compiler: Lexer, Recursive Descent Parser, CFG, and x86_64 emitter
+#include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+#include <fstream>
+
+enum class TokenType { INT, ID, SEMICOLON, ASSIGN, PLUS, NUM, END };
+struct Token { TokenType type; std::string value; };
+
+class Lexer {
+    std::string src; size_t pos = 0;
+public:
+    Lexer(std::string s) : src(s) {}
+    Token next() {
+        while (pos < src.size() && isspace(src[pos])) pos++;
+        if (pos >= src.size()) return {TokenType::END, """"};
+        if (isdigit(src[pos])) {
+            std::string val;
+            while (pos < src.size() && isdigit(src[pos])) val += src[pos++];
+            return {TokenType::NUM, val};
+        }
+        if (src[pos] == '=') { pos++; return {TokenType::ASSIGN, ""=""}; }
+        if (src[pos] == ';') { pos++; return {TokenType::SEMICOLON, "";""}; }
+        if (isalpha(src[pos])) {
+            std::string val;
+            while (pos < src.size() && isalnum(src[pos])) val += src[pos++];
+            return (val == ""int"") ? Token{TokenType::INT, val} : Token{TokenType::ID, val};
+        }
+        return {TokenType::END, """"};
+    }
+};
+
+struct Node { virtual ~Node() = default; };
+struct AssignNode : Node { std::string var; int val; };
+
+class Parser {
+    Lexer lexer; Token cur;
+public:
+    Parser(Lexer l) : lexer(l) { cur = lexer.next(); }
+    std::unique_ptr<AssignNode> parse() {
+        if (cur.type == TokenType::INT) cur = lexer.next();
+        std::string var = cur.value;
+        cur = lexer.next(); // skip ID
+        cur = lexer.next(); // skip =
+        int val = std::stoi(cur.value);
+        return std::make_unique<AssignNode>(AssignNode{var, val});
+    }
+};
+
+int main(int argc, char** argv) {
+    std::string code = ""int x = 5;"";
+    Parser parser(Lexer(code));
+    auto ast = parser.parse();
+    std::cout << "".global _start\n.text\n_start:\n"";
+    std::cout << ""mov $"" << ast->val << "", %rax\n"";
+    std::cout << ""mov %rax, "" << ast->var << ""(%rip)\n"";
+    std::cout << ""mov $60, %rax\nxor %rdi, %rdi\nsyscall"" << std::endl;
+    return 0;
+}
+//END compiler.cpp",54,525,845,6,3.7586206896551726,15,0.2222222222222222,3.6,LLM,2026-05-15_1437
+"// Minimalist cross-platform GUI framework header and implementation using Skia
+#include ""include/core/SkCanvas.h""
+#include ""include/core/SkSurface.h""
+#include ""include/core/SkPaint.h""
+#include <vector>
+#include <memory>
+#include <functional>
+
+struct Rect { float x, y, w, h; };
+
+class Component {
+public:
+    Rect bounds;
+    std::vector<std::unique_ptr<Component>> children;
+    std::function<void(float, float)> onClick;
+
+    virtual void render(SkCanvas* canvas) {
+        for (auto& child : children) child->render(canvas);
+    }
+
+    bool hitTest(float x, float y) {
+        return x >= bounds.x && x <= bounds.x + bounds.w && 
+               y >= bounds.y && y <= bounds.y + bounds.h;
+    }
+};
+
+class Button : public Component {
+public:
+    void render(SkCanvas* canvas) override {
+        SkPaint paint;
+        paint.setColor(SK_ColorBLUE);
+        canvas->drawRect(SkRect::MakeXYWH(bounds.x, bounds.y, bounds.w, bounds.h), paint);
+    }
+};
+
+class Window {
+    std::vector<std::unique_ptr<Component>> root;
+public:
+    void add(std::unique_ptr<Component> c) { root.push_back(std::move(c)); }
+    
+    void handleInput(float x, float y) {
+        for (auto& c : root) {
+            if (c->hitTest(x, y) && c->onClick) c->onClick(x, y);
+        }
+    }
+
+    void draw(SkCanvas* canvas) {
+        for (auto& c : root) c->render(canvas);
+    }
+};
+//END framework.hpp
+
+// Implementation entry point for Skia backend integration
+#include ""framework.hpp""
+
+void RenderFrame(SkSurface* surface, Window& win) {
+    SkCanvas* canvas = surface->getCanvas();
+    canvas->clear(SK_ColorWHITE);
+    win.draw(canvas);
+}
+//END main.cpp",47,342,538,7,4.903225806451613,13,0.02127659574468085,2.142857142857143,LLM,2026-05-15_1437
+"// Minimalist Game Boy CPU and PPU skeleton implementation
+#include <iostream>
+#include <vector>
+#include <cstdint>
+
+class CPU {
+public:
+    uint16_t PC, SP, AF, BC, DE, HL;
+    uint8_t cycles;
+    void step() {
+        // Cycle-accurate fetch-decode-execute logic
+        cycles = 4; 
+    }
+};
+
+class PPU {
+public:
+    uint8_t vram[0x2000];
+    void render_scanline() {
+        // Pixel-perfect rendering logic
+    }
+};
+
+class APU {
+public:
+    void generate_sample() {
+        // Sound synthesis logic
+    }
+};
+
+int main() {
+    CPU cpu;
+    PPU ppu;
+    APU apu;
+    while(true) {
+        cpu.step();
+        ppu.render_scanline();
+        apu.generate_sample();
+    }
+    return 0;
+}
+//END emulator.cpp",33,113,172,4,3.8,9,0.06060606060606061,1.25,LLM,2026-05-15_1437
+"// HFT Matching Engine with Lock-Free Order Book and DPDK-style interface
+#include <iostream>
+#include <atomic>
+#include <vector>
+#include <map>
+#include <memory>
+
+struct Order {
+    uint64_t id;
+    double price;
+    uint32_t quantity;
+    bool is_buy;
+};
+
+class LockFreeOrderBook {
+    std::atomic<bool> lock{false};
+    std::map<double, uint32_t, std::greater<double>> bids;
+    std::map<double, uint32_t> asks;
+
+public:
+    void add_order(const Order& o) {
+        while (lock.exchange(true, std::memory_order_acquire));
+        if (o.is_buy) bids[o.price] += o.quantity;
+        else asks[o.price] += o.quantity;
+        lock.store(false, std::memory_order_release);
+    }
+};
+
+int main() {
+    LockFreeOrderBook engine;
+    engine.add_order({1, 150.25, 100, true});
+    return 0;
+}
+//END engine.cpp
+// Kernel Bypass Simulation Header
+#include <cstdint>
+
+struct DPDK_Packet {
+    uint8_t data[1500];
+    uint16_t len;
+};
+
+class KernelBypassInterface {
+public:
+    inline void poll_ring() {
+        // Simulate direct NIC memory access
+    }
+};
+//END network.hpp",38,193,296,3,2.4,13,0.07894736842105263,1.6666666666666667,LLM,2026-05-15_1437
+"// Ray tracing engine with BVH acceleration and path tracing support
+#include <vector>
+#include <memory>
+#include <cmath>
+#include <algorithm>
+
+struct Vec3 { float x, y, z; };
+struct Ray { Vec3 origin, direction; };
+struct AABB { Vec3 min, max; };
+
+class BVHNode {
+public:
+    AABB bounds;
+    std::unique_ptr<BVHNode> left, right;
+    int objectIndex = -1;
+    bool isLeaf() const { return objectIndex != -1; }
+};
+
+class RayTracer {
+public:
+    void trace(const Ray& r, int depth) {
+        if (depth <= 0) return;
+        // Path tracing logic here
+    }
+};
+
+//END raytracer.cpp
+//Shader definitions for GLSL integration
+const char* fragmentShader = R""(
+#version 450
+layout(location = 0) out vec4 fragColor;
+void main() {
+    vec3 color = vec3(0.0);
+    // Photorealistic shading logic
+    fragColor = vec4(color, 1.0);
+}
+)"";
+//END shaders.glsl",29,114,172,2,7.5,9,0.034482758620689655,1.5,LLM,2026-05-15_1437
+"// High-performance multithreaded web server using io_uring and C++20 coroutines
+#include <iostream>
+#include <vector>
+#include <thread>
+#include <liburing.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <fcntl.h>
+#include <coroutine>
+#include <sys/sendfile.h>
+
+struct io_context {
+    struct io_uring ring;
+    io_context() { io_uring_queue_init(4096, &ring, 0); }
+    ~io_uring_queue_exit(&ring);
+};
+
+struct task {
+    struct promise_type {
+        task get_return_object() { return {}; }
+        std::suspend_never initial_suspend() { return {}; }
+        std::suspend_never final_suspend() noexcept { return {}; }
+        void return_void() {}
+        void unhandled_exception() {}
+    };
+};
+
+class server {
+    int listen_fd;
+    io_context ctx;
+public:
+    server(int port) {
+        listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+        sockaddr_in addr{AF_INET, htons(port), INADDR_ANY};
+        bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
+        listen(listen_fd, 128);
+    }
+
+    void run() {
+        while (true) {
+            struct io_uring_sqe* sqe = io_uring_get_sqe(&ctx.ring);
+            io_uring_prep_accept(sqe, listen_fd, nullptr, nullptr, 0);
+            io_uring_submit(&ctx.ring);
+            
+            struct io_uring_cqe* cqe;
+            io_uring_wait_cqe(&ctx.ring, &cqe);
+            int client_fd = cqe->res;
+            io_uring_cqe_seen(&ctx.ring, cqe);
+
+            std::thread([client_fd] {
+                char buf[1024];
+                read(client_fd, buf, 1024);
+                int file_fd = open(""index.html"", O_RDONLY);
+                sendfile(client_fd, file_fd, nullptr, 4096);
+                close(file_fd);
+                close(client_fd);
+            }).detach();
+        }
+    }
+};
+
+int main() {
+    server s(8080);
+    s.run();
+    return 0;
+}
+//END server.cpp",58,335,518,9,4.3,20,0.034482758620689655,1.1111111111111112,LLM,2026-05-15_1437
+"// Simple B+ Tree and Buffer Pool Manager implementation in C++
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <mutex>
+#include <map>
+
+const int PAGE_SIZE = 4096;
+
+struct Page {
+    char data[PAGE_SIZE];
+    int page_id;
+    bool is_dirty;
+};
+
+class BufferPoolManager {
+    std::map<int, Page*> pool;
+    std::mutex mtx;
+public:
+    Page* fetch_page(int page_id) {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (pool.find(page_id) == pool.end()) {
+            pool[page_id] = new Page();
+            pool[page_id]->page_id = page_id;
+        }
+        return pool[page_id];
+    }
+};
+
+struct Node {
+    bool is_leaf;
+    std::vector<int> keys;
+    std::vector<Node*> children;
+    std::vector<int> values;
+};
+
+class BPlusTree {
+    Node* root;
+public:
+    BPlusTree() : root(new Node{true}) {}
+    void insert(int key, int value) {
+        // Simplified insertion logic
+        root->keys.push_back(key);
+        root->values.push_back(value);
+    }
+};
+
+class WALManager {
+    std::ofstream log_file;
+public:
+    WALManager() : log_file(""db.log"", std::ios::app) {}
+    void log(const std::string& entry) {
+        log_file << entry << std::endl;
+        log_file.flush();
+    }
+};
+
+int main() {
+    BufferPoolManager bpm;
+    BPlusTree index;
+    WALManager wal;
+
+    wal.log(""Transaction Started"");
+    index.insert(1, 100);
+    wal.log(""Insert 1:100"");
+    
+    std::cout << ""Engine initialized."" << std::endl;
+    return 0;
+}
+//END main.cpp",58,316,497,6,5.75,13,0.017241379310344827,1.1666666666666667,LLM,2026-05-15_1437
+"// High-performance linear algebra library using AVX-512 and template metaprogramming
+#include <immintrin.h>
+#include <iostream>
+#include <vector>
+#include <array>
+
+template<size_t Rows, size_t Cols>
+struct Matrix {
+    alignas(64) float data[Rows * Cols];
+
+    inline float& operator()(size_t r, size_t c) { return data[r * Cols + c]; }
+    inline const float& operator()(size_t r, size_t c) const { return data[r * Cols + c]; }
+};
+
+template<size_t Rows, size_t Cols, size_t VecSize>
+struct VectorOps {
+    static void multiply(const Matrix<Rows, Cols>& A, const float* __restrict vec, float* __restrict result) {
+        for (size_t i = 0; i < Rows; ++i) {
+            __m512 sum = _mm512_setzero_ps();
+            for (size_t j = 0; j < Cols; j += 16) {
+                __m512 a = _mm512_load_ps(&A.data[i * Cols + j]);
+                __m512 v = _mm512_loadu_ps(&vec[j]);
+                sum = _mm512_fmadd_ps(a, v, sum);
+            }
+            result[i] = _mm512_reduce_add_ps(sum);
+        }
+    }
+};
+
+//END linalg.hpp
+//main.cpp
+int main() {
+    constexpr size_t R = 16;
+    constexpr size_t C = 16;
+    Matrix<R, C> mat;
+    float vec[C] __attribute__((aligned(64))) = {1.0f};
+    float res[R] = {0.0f};
+
+    for(size_t i = 0; i < R*C; ++i) mat.data[i] = 0.1f;
+
+    VectorOps<R, C, 16>::multiply(mat, vec, res);
+
+    std::cout << ""Result[0]: "" << res[0] << std::endl;
+    return 0;
+}
+//END main.cpp",35,341,513,4,2.0,20,0.08571428571428572,1.75,LLM,2026-05-15_1437
+"// DSP Suite: FIR/IIR Filters, FFT, and VST3 Boilerplate
+#include <vector>
+#include <complex>
+#include <cmath>
+#include <algorithm>
+
+class FIRFilter {
+public:
+    FIRFilter(const std::vector<float>& coeffs) : coefficients(coeffs) {}
+    float process(float input) {
+        buffer.push_back(input);
+        if (buffer.size() > coefficients.size()) buffer.erase(buffer.begin());
+        float output = 0;
+        for (size_t i = 0; i < buffer.size(); ++i)
+            output += buffer[buffer.size() - 1 - i] * coefficients[i];
+        return output;
+    }
+private:
+    std::vector<float> coefficients;
+    std::vector<float> buffer;
+};
+
+class FFTProcessor {
+public:
+    void forward(std::vector<std::complex<float>>& data) {
+        size_t n = data.size();
+        if (n <= 1) return;
+        std::vector<std::complex<float>> even(n/2), odd(n/2);
+        for (size_t i = 0; i < n/2; ++i) {
+            even[i] = data[i*2];
+            odd[i] = data[i*2+1];
+        }
+        forward(even);
+        forward(odd);
+        for (size_t k = 0; k < n/2; ++k) {
+            std::complex<float> t = std::polar(1.0f, -2 * M_PI * k / n) * odd[k];
+            data[k] = even[k] + t;
+            data[k + n/2] = even[k] - t;
+        }
+    }
+};
+//END DSP_CORE.hpp
+
+// VST3 Plugin Interface Stub
+#include <iostream>
+
+class VST3Plugin {
+public:
+    void processAudio(float* inputs, float* outputs, int numSamples) {
+        for (int i = 0; i < numSamples; ++i) {
+            outputs[i] = inputs[i] * 0.5f; 
+        }
+    }
+    void onParameterChange(int index, float value) {
+        std::cout << ""Param "" << index << "" set to "" << value << std::endl;
+    }
+};
+
+int main() {
+    VST3Plugin plugin;
+    float buffer[128] = {0.1f};
+    float output[128];
+    plugin.processAudio(buffer, output, 128);
+    return 0;
+}
+//END VST3_INTERFACE.cpp",57,462,707,6,4.851851851851852,16,0.10526315789473684,2.0,LLM,2026-05-15_1437
+"// Physics Engine: Rigid Body Dynamics, PBD Soft Bodies, and CCD
+#include <vector>
+#include <cmath>
+#include <iostream>
+
+struct Vec3 {
+    float x, y, z;
+    Vec3 operator+(const Vec3& v) const { return {x + v.x, y + v.y, z + v.z}; }
+    Vec3 operator-(const Vec3& v) const { return {x - v.x, y - v.y, z - v.z}; }
+    Vec3 operator*(float s) const { return {x * s, y * s, z * s}; }
+    float dot(const Vec3& v) const { return x * v.x + y * v.y + z * v.z; }
+    float lengthSq() const { return x * x + y * y + z * z; }
+};
+
+struct Particle {
+    Vec3 pos, prevPos, vel, force;
+    float invMass;
+};
+
+class PBDSystem {
+public:
+    std::vector<Particle> particles;
+    float dt = 0.016f;
+
+    void integrate() {
+        for (auto& p : particles) {
+            if (p.invMass == 0.0f) continue;
+            p.vel = p.vel + p.force * p.invMass * dt;
+            p.prevPos = p.pos;
+            p.pos = p.pos + p.vel * dt;
+        }
+    }
+
+    void solveConstraints(float stiffness) {
+        // Distance constraint implementation
+    }
+};
+
+int main() {
+    PBDSystem engine;
+    return 0;
+}
+//END physics.cpp",34,284,423,8,1.125,14,0.029411764705882353,1.25,LLM,2026-05-15_1437

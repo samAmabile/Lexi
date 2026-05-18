@@ -1,0 +1,1018 @@
+iteration,prompt,response,model,language,label,timestamp
+1,"Tetris in C: Build a tetris analog in C that works entirely in the terminal/console. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Tetris implementation in C for terminal
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include <termios.h>
+#include <fcntl.h>
+
+#define ROWS 20
+#define COLS 10
+
+int board[ROWS][COLS] = {0};
+int current_piece[4][4];
+int cur_x = 3, cur_y = 0;
+
+int shapes[7][4][4] = {
+    {{1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}},
+    {{1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}},
+    {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}},
+    {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}},
+    {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}},
+    {{1,0,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}},
+    {{0,0,1,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}}
+};
+
+void draw() {
+    printf(""\033[H"");
+    for (int i = 0; i < ROWS; i++) {
+        printf(""|"");
+        for (int j = 0; j < COLS; j++) {
+            int filled = board[i][j];
+            if (i >= cur_y && i < cur_y + 4 && j >= cur_x && j < cur_x + 4)
+                if (current_piece[i - cur_y][j - cur_x]) filled = 1;
+            printf(filled ? ""[]"" : "" ."");
+        }
+        printf(""|\n"");
+    }
+}
+
+int kbhit() {
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+    if(ch != EOF) { ungetc(ch, stdin); return 1; }
+    return 0;
+}
+
+int main() {
+    srand(time(NULL));
+    int shape_idx = rand() % 7;
+    for(int i=0; i<4; i++) for(int j=0; j<4; j++) current_piece[i][j] = shapes[shape_idx][i][j];
+    
+    printf(""\033[2J"");
+    while(1) {
+        draw();
+        if (kbhit()) {
+            char c = getchar();
+            if (c == 'a' && cur_x > 0) cur_x--;
+            if (c == 'd' && cur_x < COLS - 4) cur_x++;
+            if (c == 's') cur_y++;
+        }
+        cur_y++;
+        if (cur_y > ROWS - 2) {
+            for(int i=0; i<4; i++) for(int j=0; j<4; j++) if(current_piece[i][j]) board[cur_y+i-1][cur_x+j] = 1;
+            cur_y = 0; cur_x = 3;
+            shape_idx = rand() % 7;
+            for(int i=0; i<4; i++) for(int j=0; j<4; j++) current_piece[i][j] = shapes[shape_idx][i][j];
+        }
+        usleep(200000);
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:37:43.147253
+2,"Chess Engine in C: Build a chess engine in C that works entirely in the terminal. Include user and computer roles. Generate a CLI type-based move inputting system and a simple board that renders in the terminal. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple terminal-based chess engine in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char board[8][8] = {
+    {'r','n','b','q','k','b','n','r'},
+    {'p','p','p','p','p','p','p','p'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'P','P','P','P','P','P','P','P'},
+    {'R','N','B','Q','K','B','N','R'}
+};
+
+void print_board() {
+    printf(""  a b c d e f g h\n"");
+    for(int i = 0; i < 8; i++) {
+        printf(""%d "", 8 - i);
+        for(int j = 0; j < 8; j++) printf(""%c "", board[i][j]);
+        printf(""%d\n"", 8 - i);
+    }
+    printf(""  a b c d e f g h\n"");
+}
+
+int main() {
+    char move[5];
+    while(1) {
+        print_board();
+        printf(""Enter move (e.g., e2e4): "");
+        if(scanf(""%s"", move) != 1) break;
+        
+        int c1 = move[0] - 'a';
+        int r1 = 8 - (move[1] - '0');
+        int c2 = move[2] - 'a';
+        int r2 = 8 - (move[3] - '0');
+
+        if(c1 >= 0 && c1 < 8 && r1 >= 0 && r1 < 8 && c2 >= 0 && c2 < 8 && r2 >= 0 && r2 < 8) {
+            board[r2][c2] = board[r1][c1];
+            board[r1][c1] = '.';
+        } else {
+            printf(""Invalid move format.\n"");
+        }
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:37:46.120433
+3,"BMP Image Processor in C: Write a C program that reads a .bmp file into memory, modifies the pixel data to convert the image to grayscale, and writes the result to a new file. Use a struct with #pragma pack(1) to map the BMP header. Build entirely in C and in one single executable file, with modules separated by comments.
+","// BMP Grayscale Converter in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#pragma pack(push, 1)
+typedef struct {
+    uint16_t type;
+    uint32_t size;
+    uint16_t reserved1;
+    uint16_t reserved2;
+    uint32_t offset;
+} BMPHeader;
+
+typedef struct {
+    uint32_t size;
+    int32_t width;
+    int32_t height;
+    uint16_t planes;
+    uint16_t bitCount;
+    uint32_t compression;
+    uint32_t sizeImage;
+    int32_t xPelsPerMeter;
+    int32_t yPelsPerMeter;
+    uint32_t clrUsed;
+    uint32_t clrImportant;
+} BMPInfoHeader;
+#pragma pack(pop)
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) return 1;
+
+    FILE *f = fopen(argv[1], ""rb"");
+    if (!f) return 1;
+
+    BMPHeader header;
+    BMPInfoHeader infoHeader;
+    fread(&header, sizeof(BMPHeader), 1, f);
+    fread(&infoHeader, sizeof(BMPInfoHeader), 1, f);
+
+    fseek(f, header.offset, SEEK_SET);
+    uint32_t dataSize = infoHeader.width * infoHeader.height * 3;
+    uint8_t *data = malloc(dataSize);
+    fread(data, 1, dataSize, f);
+    fclose(f);
+
+    for (uint32_t i = 0; i < dataSize; i += 3) {
+        uint8_t gray = (uint8_t)(0.299 * data[i+2] + 0.587 * data[i+1] + 0.114 * data[i]);
+        data[i] = data[i+1] = data[i+2] = gray;
+    }
+
+    FILE *out = fopen(argv[2], ""wb"");
+    fwrite(&header, sizeof(BMPHeader), 1, out);
+    fwrite(&infoHeader, sizeof(BMPInfoHeader), 1, out);
+    fseek(out, header.offset, SEEK_SET);
+    fwrite(data, 1, dataSize, out);
+    fclose(out);
+
+    free(data);
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:37:50.158991
+4,"Relational DB in C: A basic SQLite-style database that uses a B-tree for indexing and handles simple SQL-like commands. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple B-Tree based database engine in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_KEYS 3
+#define MAX_CHILDREN (MAX_KEYS + 1)
+
+typedef struct Node {
+    int keys[MAX_KEYS];
+    struct Node* children[MAX_CHILDREN];
+    int num_keys;
+    bool is_leaf;
+} Node;
+
+Node* create_node(bool is_leaf) {
+    Node* node = malloc(sizeof(Node));
+    node->is_leaf = is_leaf;
+    node->num_keys = 0;
+    for (int i = 0; i < MAX_CHILDREN; i++) node->children[i] = NULL;
+    return node;
+}
+
+void insert_non_full(Node* node, int key) {
+    int i = node->num_keys - 1;
+    if (node->is_leaf) {
+        while (i >= 0 && key < node->keys[i]) {
+            node->keys[i + 1] = node->keys[i];
+            i--;
+        }
+        node->keys[i + 1] = key;
+        node->num_keys++;
+    } else {
+        while (i >= 0 && key < node->keys[i]) i--;
+        insert_non_full(node->children[i + 1], key);
+    }
+}
+
+int main(int argc, char* argv[]) {
+    Node* root = create_node(true);
+    char buffer[256];
+
+    printf(""SimpleDB initialized. Commands: insert <int>, exit\n"");
+
+    while (true) {
+        printf(""db > "");
+        if (!fgets(buffer, sizeof(buffer), stdin)) break;
+        
+        if (strncmp(buffer, ""insert"", 6) == 0) {
+            int val = atoi(buffer + 7);
+            insert_non_full(root, val);
+            printf(""Inserted %d\n"", val);
+        } else if (strncmp(buffer, ""exit"", 4) == 0) {
+            break;
+        } else {
+            printf(""Unknown command\n"");
+        }
+    }
+
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:37:53.493389
+5,"Memory Allocator in C: Implement your own malloc, free, and realloc using a linked list or buddy system. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple memory allocator using a linked list of free blocks
+#include <unistd.h>
+#include <stddef.h>
+
+typedef struct Block {
+    size_t size;
+    int free;
+    struct Block *next;
+} Block;
+
+static void *base = NULL;
+
+void *malloc(size_t size) {
+    Block *curr = (Block *)base;
+    Block *prev = NULL;
+    size_t total_size = size + sizeof(Block);
+
+    while (curr) {
+        if (curr->free && curr->size >= size) {
+            curr->free = 0;
+            return (void *)(curr + 1);
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    Block *new_block = (Block *)sbrk(total_size);
+    if (new_block == (void *)-1) return NULL;
+
+    new_block->size = size;
+    new_block->free = 0;
+    new_block->next = NULL;
+
+    if (!base) base = new_block;
+    else prev->next = new_block;
+
+    return (void *)(new_block + 1);
+}
+
+void free(void *ptr) {
+    if (!ptr) return;
+    Block *block = (Block *)ptr - 1;
+    block->free = 1;
+}
+
+void *realloc(void *ptr, size_t size) {
+    if (!ptr) return malloc(size);
+    Block *block = (Block *)ptr - 1;
+    if (block->size >= size) return ptr;
+
+    void *new_ptr = malloc(size);
+    if (new_ptr) {
+        char *src = (char *)ptr;
+        char *dst = (char *)new_ptr;
+        for (size_t i = 0; i < block->size; i++) dst[i] = src[i];
+        free(ptr);
+    }
+    return new_ptr;
+}
+
+int main() {
+    int *arr = (int *)malloc(10 * sizeof(int));
+    arr[0] = 42;
+    free(arr);
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:37:56.639178
+6,"Custom Shell in C: Build a Unix-like shell in C (like sh) with support for piping, flags, and documentation. Build entirely in C and in one single executable file, with modules separated by comments. 
+","// Simple Unix-like shell implementation in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+
+#define MAX_LINE 1024
+#define MAX_ARGS 64
+
+void execute_command(char **args) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        if (execvp(args[0], args) == -1) {
+            perror(""shell"");
+        }
+        exit(EXIT_FAILURE);
+    } else if (pid < 0) {
+        perror(""shell"");
+    } else {
+        wait(NULL);
+    }
+}
+
+void execute_pipe(char **args1, char **args2) {
+    int pipefd[2];
+    pipe(pipefd);
+    if (fork() == 0) {
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        execvp(args1[0], args1);
+        exit(EXIT_FAILURE);
+    }
+    if (fork() == 0) {
+        dup2(pipefd[0], STDIN_FILENO);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        execvp(args2[0], args2);
+        exit(EXIT_FAILURE);
+    }
+    close(pipefd[0]);
+    close(pipefd[1]);
+    wait(NULL);
+    wait(NULL);
+}
+
+int main() {
+    char line[MAX_LINE];
+    char *args[MAX_ARGS];
+    while (1) {
+        printf(""shell> "");
+        if (!fgets(line, MAX_LINE, stdin)) break;
+        line[strcspn(line, ""\n"")] = 0;
+        if (strlen(line) == 0) continue;
+        if (strcmp(line, ""exit"") == 0) break;
+
+        int i = 0;
+        char *token = strtok(line, "" "");
+        int pipe_idx = -1;
+        while (token != NULL) {
+            if (strcmp(token, ""|"") == 0) {
+                pipe_idx = i;
+                args[i] = NULL;
+            } else {
+                args[i] = token;
+            }
+            token = strtok(NULL, "" "");
+            i++;
+        }
+        args[i] = NULL;
+
+        if (pipe_idx != -1) {
+            execute_pipe(args, &args[pipe_idx + 1]);
+        } else {
+            execute_command(args);
+        }
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:00.026108
+7,"Virtual Machine in C: Create a simple CPU emulator (like Chip-8 or a custom instruction set) with a stack and registers. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple stack-based VM implementation in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    PUSH, ADD, SUB, MUL, DIV, PRINT, HALT
+} Instruction;
+
+int stack[256];
+int sp = -1;
+
+void push(int value) {
+    stack[++sp] = value;
+}
+
+int pop() {
+    return stack[sp--];
+}
+
+int main() {
+    int program[] = {
+        PUSH, 10,
+        PUSH, 20,
+        ADD,
+        PRINT,
+        HALT
+    };
+
+    bool running = true;
+    int pc = 0;
+
+    while (running) {
+        int instr = program[pc++];
+        switch (instr) {
+            case PUSH:
+                push(program[pc++]);
+                break;
+            case ADD: {
+                int a = pop();
+                int b = pop();
+                push(a + b);
+                break;
+            }
+            case SUB: {
+                int a = pop();
+                int b = pop();
+                push(b - a);
+                break;
+            }
+            case PRINT:
+                printf(""%d\n"", stack[sp]);
+                break;
+            case HALT:
+                running = false;
+                break;
+        }
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:03.326000
+8,"SQLite-style B-Tree in C: Implement a simple B-Tree indexing structure in C that stores integer keys. Write the core functions for insert_node and search_node, handling node splitting when a leaf exceeds a fixed degree. Build entirely in C and in one single executable file, with modules separated by comments.
+","// B-Tree implementation in C for integer keys
+#include <stdio.h>
+#include <stdlib.h>
+
+#define DEGREE 3
+
+typedef struct Node {
+    int keys[2 * DEGREE - 1];
+    struct Node *children[2 * DEGREE];
+    int num_keys;
+    int is_leaf;
+} Node;
+
+Node* create_node(int is_leaf) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->is_leaf = is_leaf;
+    node->num_keys = 0;
+    for (int i = 0; i < 2 * DEGREE; i++) node->children[i] = NULL;
+    return node;
+}
+
+void split_child(Node* parent, int i, Node* child) {
+    Node* new_node = create_node(child->is_leaf);
+    new_node->num_keys = DEGREE - 1;
+    for (int j = 0; j < DEGREE - 1; j++) new_node->keys[j] = child->keys[j + DEGREE];
+    if (!child->is_leaf) {
+        for (int j = 0; j < DEGREE; j++) new_node->children[j] = child->children[j + DEGREE];
+    }
+    child->num_keys = DEGREE - 1;
+    for (int j = parent->num_keys; j >= i + 1; j--) parent->children[j + 1] = parent->children[j];
+    parent->children[i + 1] = new_node;
+    for (int j = parent->num_keys - 1; j >= i; j--) parent->keys[j + 1] = parent->keys[j];
+    parent->keys[i] = child->keys[DEGREE - 1];
+    parent->num_keys++;
+}
+
+void insert_non_full(Node* node, int key) {
+    int i = node->num_keys - 1;
+    if (node->is_leaf) {
+        while (i >= 0 && key < node->keys[i]) {
+            node->keys[i + 1] = node->keys[i];
+            i--;
+        }
+        node->keys[i + 1] = key;
+        node->num_keys++;
+    } else {
+        while (i >= 0 && key < node->keys[i]) i--;
+        if (node->children[i + 1]->num_keys == 2 * DEGREE - 1) {
+            split_child(node, i + 1, node->children[i + 1]);
+            if (key > node->keys[i + 1]) i++;
+        }
+        insert_non_full(node->children[i + 1], key);
+    }
+}
+
+Node* insert(Node* root, int key) {
+    if (root->num_keys == 2 * DEGREE - 1) {
+        Node* new_root = create_node(0);
+        new_root->children[0] = root;
+        split_child(new_root, 0, root);
+        insert_non_full(new_root, key);
+        return new_root;
+    }
+    insert_non_full(root, key);
+    return root;
+}
+
+Node* search(Node* root, int key) {
+    int i = 0;
+    while (i < root->num_keys && key > root->keys[i]) i++;
+    if (i < root->num_keys && root->keys[i] == key) return root;
+    if (root->is_leaf) return NULL;
+    return search(root->children[i], key);
+}
+
+int main() {
+    Node* root = create_node(1);
+    root = insert(root, 10);
+    root = insert(root, 20);
+    root = insert(root, 5);
+    
+    if (search(root, 20)) printf(""Found 20\n"");
+    else printf(""Not found 20\n"");
+    
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:07.652095
+9,"Chat Application (TCP Sockets) in C: Develop a C chat server and client pair. The server should use select() or poll() to monitor multiple file descriptors and broadcast any message received from one client to all other connected clients.Build entirely in C and in one single executable file, with modules separated by comments.
+","// Chat server and client using TCP sockets and select()
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/select.h>
+
+#define PORT 8080
+#define MAX_CLIENTS 10
+#define BUFFER_SIZE 1024
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf(""Usage: %s [server|client]\n"", argv[0]);
+        return 1;
+    }
+
+    if (strcmp(argv[1], ""server"") == 0) {
+        int master_socket, addrlen, new_socket, client_socket[MAX_CLIENTS], activity, i, valread, sd;
+        struct sockaddr_in address;
+        char buffer[BUFFER_SIZE];
+        fd_set readfds;
+
+        for (i = 0; i < MAX_CLIENTS; i++) client_socket[i] = 0;
+
+        master_socket = socket(AF_INET, SOCK_STREAM, 0);
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = INADDR_ANY;
+        address.sin_port = htons(PORT);
+
+        bind(master_socket, (struct sockaddr *)&address, sizeof(address));
+        listen(master_socket, 3);
+
+        while (1) {
+            FD_ZERO(&readfds);
+            FD_SET(master_socket, &readfds);
+            int max_sd = master_socket;
+
+            for (i = 0; i < MAX_CLIENTS; i++) {
+                sd = client_socket[i];
+                if (sd > 0) FD_SET(sd, &readfds);
+                if (sd > max_sd) max_sd = sd;
+            }
+
+            activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
+
+            if (FD_ISSET(master_socket, &readfds)) {
+                new_socket = accept(master_socket, NULL, NULL);
+                for (i = 0; i < MAX_CLIENTS; i++) {
+                    if (client_socket[i] == 0) {
+                        client_socket[i] = new_socket;
+                        break;
+                    }
+                }
+            }
+
+            for (i = 0; i < MAX_CLIENTS; i++) {
+                sd = client_socket[i];
+                if (FD_ISSET(sd, &readfds)) {
+                    valread = read(sd, buffer, BUFFER_SIZE);
+                    if (valread == 0) {
+                        close(sd);
+                        client_socket[i] = 0;
+                    } else {
+                        buffer[valread] = '\0';
+                        for (int j = 0; j < MAX_CLIENTS; j++) {
+                            if (client_socket[j] != 0 && client_socket[j] != sd) {
+                                send(client_socket[j], buffer, strlen(buffer), 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        int sock = 0;
+        struct sockaddr_in serv_addr;
+        char buffer[BUFFER_SIZE] = {0};
+        fd_set readfds;
+
+        sock = socket(AF_INET, SOCK_STREAM, 0);
+        serv_addr.sin_family = AF_INET;
+        serv_addr.sin_port = htons(PORT);
+        inet_pton(AF_INET, ""127.0.0.1"", &serv_addr.sin_addr);
+        connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+
+        while (1) {
+            FD_ZERO(&readfds);
+            FD_SET(STDIN_FILENO, &readfds);
+            FD_SET(sock, &readfds);
+
+            select(sock + 1, &readfds, NULL, NULL, NULL);
+
+            if (FD_ISSET(STDIN_FILENO, &readfds)) {
+                fgets(buffer, BUFFER_SIZE, stdin);
+                send(sock, buffer, strlen(buffer), 0);
+            }
+            if (FD_ISSET(sock, &readfds)) {
+                int valread = read(sock, buffer, BUFFER_SIZE);
+                buffer[valread] = '\0';
+                printf(""%s"", buffer);
+            }
+        }
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:12.626751
+10,"Virtual CPU Emulator in C: Write a C emulator for a simple 8-bit CPU with a 16-bit address space. Define a struct for registers (A, X, Y, PC, SP) and a loop that fetches opcodes from a memory array and executes them. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple 8-bit CPU emulator with 16-bit address space
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    uint8_t A, X, Y, SP;
+    uint16_t PC;
+    uint8_t flags;
+} CPU;
+
+uint8_t memory[65536];
+
+void fetch_execute(CPU *cpu) {
+    uint8_t opcode = memory[cpu->PC++];
+    switch(opcode) {
+        case 0x00: // NOP
+            break;
+        case 0xA9: // LDA Immediate
+            cpu->A = memory[cpu->PC++];
+            break;
+        case 0xAA: // TAX
+            cpu->X = cpu->A;
+            break;
+        case 0x4C: // JMP Absolute
+            cpu->PC = memory[cpu->PC] | (memory[cpu->PC + 1] << 8);
+            break;
+        default:
+            printf(""Unknown Opcode: 0x%02X\n"", opcode);
+            break;
+    }
+}
+
+int main() {
+    CPU cpu = {0};
+    memory[0x0000] = 0xA9;
+    memory[0x0001] = 0x42;
+    memory[0x0002] = 0xAA;
+    
+    while(cpu.PC < 3) {
+        fetch_execute(&cpu);
+    }
+    
+    printf(""Register A: 0x%02X, Register X: 0x%02X\n"", cpu.A, cpu.X);
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:15.214273
+11,"XoR Hashmap in C: Build a hashmap in C that maps (username, password) pairs to unique keys (e.g. {[""username"": ""password""]: 208938923892} using XoR linked-list chaining for collisions. Enforce secure passwords. Include a CLI for creating usernames and paswords and generating keys to save them to the hashmap. Build entirely in C and in one single executable file, with modules separated by comments.
+","// C implementation of a XOR-based hashmap with linked list chaining
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define TABLE_SIZE 1024
+
+typedef struct Node {
+    char *username;
+    char *password;
+    unsigned long key;
+    struct Node *next;
+} Node;
+
+Node *hash_table[TABLE_SIZE];
+
+unsigned long xor_hash(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) ^ c;
+    return hash;
+}
+
+int is_secure(const char *password) {
+    int len = strlen(password);
+    int has_upper = 0, has_lower = 0, has_digit = 0;
+    if (len < 8) return 0;
+    for (int i = 0; i < len; i++) {
+        if (isupper(password[i])) has_upper = 1;
+        if (islower(password[i])) has_lower = 1;
+        if (isdigit(password[i])) has_digit = 1;
+    }
+    return has_upper && has_lower && has_digit;
+}
+
+void insert(char *username, char *password) {
+    unsigned long hash_val = xor_hash(username) ^ xor_hash(password);
+    int index = hash_val % TABLE_SIZE;
+    Node *new_node = malloc(sizeof(Node));
+    new_node->username = strdup(username);
+    new_node->password = strdup(password);
+    new_node->key = hash_val;
+    new_node->next = hash_table[index];
+    hash_table[index] = new_node;
+    printf(""Stored key: %lu\n"", hash_val);
+}
+
+int main() {
+    char user[64], pass[64];
+    while (1) {
+        printf(""Enter username: "");
+        scanf(""%s"", user);
+        printf(""Enter password: "");
+        scanf(""%s"", pass);
+        if (!is_secure(pass)) {
+            printf(""Password insecure. Must be 8+ chars with upper, lower, digit.\n"");
+            continue;
+        }
+        insert(user, pass);
+    }
+    return 0;
+}
+//END main.c",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:18.577772
+12,"Brainfuck Interpreter in C: Create a Brainfuck language interpreter in C. Use an array of 30,000 bytes as the memory tape and a switch statement inside a loop to process the eight standard commands: >, <, +, -, ., ,, [, and ]. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Brainfuck interpreter in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) return 1;
+    FILE *f = fopen(argv[1], ""r"");
+    if (!f) return 1;
+    fseek(f, 0, SEEK_END);
+    long size = ftell(f);
+    rewind(f);
+    char *code = malloc(size + 1);
+    fread(code, 1, size, f);
+    code[size] = 0;
+    fclose(f);
+
+    unsigned char tape[30000] = {0};
+    int ptr = 0;
+    int pc = 0;
+    int loop_stack[1000];
+    int stack_ptr = 0;
+
+    while (code[pc]) {
+        switch (code[pc]) {
+            case '>': ptr++; break;
+            case '<': ptr--; break;
+            case '+': tape[ptr]++; break;
+            case '-': tape[ptr]--; break;
+            case '.': putchar(tape[ptr]); break;
+            case ',': tape[ptr] = getchar(); break;
+            case '[':
+                if (tape[ptr] == 0) {
+                    int depth = 1;
+                    while (depth > 0) {
+                        pc++;
+                        if (code[pc] == '[') depth++;
+                        else if (code[pc] == ']') depth--;
+                    }
+                } else {
+                    loop_stack[stack_ptr++] = pc;
+                }
+                break;
+            case ']':
+                if (tape[ptr] != 0) {
+                    pc = loop_stack[stack_ptr - 1];
+                } else {
+                    stack_ptr--;
+                }
+                break;
+        }
+        pc++;
+    }
+    free(code);
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:21.271074
+13,"HTTP Server in C: A multi-threaded web server in C using sockets that can serve static HTML and handle GET/POST requests. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Multi-threaded HTTP server in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+void *handle_client(void *arg) {
+    int client_socket = *(int *)arg;
+    free(arg);
+    char buffer[2048] = {0};
+    read(client_socket, buffer, 2048);
+    
+    char *response = ""HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body><h1>Server Active</h1></body></html>"";
+    write(client_socket, response, strlen(response));
+    close(client_socket);
+    return NULL;
+}
+
+int main() {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in address;
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(8080);
+
+    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
+    listen(server_fd, 10);
+
+    while (1) {
+        int *client_socket = malloc(sizeof(int));
+        *client_socket = accept(server_fd, NULL, NULL);
+        pthread_t thread;
+        pthread_create(&thread, NULL, handle_client, client_socket);
+        pthread_detach(thread);
+    }
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:23.820935
+14,"Text Editor in C: Build a text editor in C using a gap buffer. Similar to vim or emacs. Build entirely in C and in one single executable file, with modules separated by comments.
+","// Simple gap buffer text editor in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <unistd.h>
+
+typedef struct {
+    char *buffer;
+    int size;
+    int gap_start;
+    int gap_end;
+    int cursor;
+} GapBuffer;
+
+void init_buffer(GapBuffer *gb, int initial_size) {
+    gb->buffer = malloc(initial_size);
+    gb->size = initial_size;
+    gb->gap_start = 0;
+    gb->gap_end = initial_size - 1;
+    gb->cursor = 0;
+}
+
+void move_gap(GapBuffer *gb, int pos) {
+    while (gb->cursor < pos && gb->gap_end < gb->size - 1) {
+        gb->buffer[gb->gap_start++] = gb->buffer[++gb->gap_end];
+        gb->cursor++;
+    }
+    while (gb->cursor > pos && gb->gap_start > 0) {
+        gb->buffer[gb->gap_end--] = gb->buffer[--gb->gap_start];
+        gb->cursor--;
+    }
+}
+
+void insert_char(GapBuffer *gb, char c) {
+    if (gb->gap_start == gb->gap_end) return;
+    gb->buffer[gb->gap_start++] = c;
+    gb->cursor++;
+}
+
+void render(GapBuffer *gb) {
+    write(STDOUT_FILENO, ""\x1b[2J"", 4);
+    write(STDOUT_FILENO, ""\x1b[H"", 3);
+    for (int i = 0; i < gb->gap_start; i++) write(STDOUT_FILENO, &gb->buffer[i], 1);
+    for (int i = gb->gap_end + 1; i < gb->size; i++) write(STDOUT_FILENO, &gb->buffer[i], 1);
+}
+
+int main() {
+    struct termios orig, raw;
+    tcgetattr(STDIN_FILENO, &orig);
+    raw = orig;
+    raw.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
+    GapBuffer gb;
+    init_buffer(&gb, 1024);
+
+    char c;
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+        if (c == 'h') move_gap(&gb, gb.cursor - 1);
+        else if (c == 'l') move_gap(&gb, gb.cursor + 1);
+        else insert_char(&gb, c);
+        render(&gb);
+    }
+
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig);
+    free(gb.buffer);
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:27.275784
+15,"Garbage Collector (Mark-and-Sweep) in C: Write a minimal 'Mark-and-Sweep' garbage collector in C. Create a function to register allocated pointers and a collect function that traverses a simulated root set to free unreachable memory.Build entirely in C and in one single executable file, with modules separated by comments.
+","// Minimal Mark-and-Sweep Garbage Collector in C
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Object {
+    void* ptr;
+    bool marked;
+    struct Object* next;
+} Object;
+
+Object* heap = NULL;
+void** roots[1024];
+int root_count = 0;
+
+void gc_register(void* ptr) {
+    Object* new_obj = malloc(sizeof(Object));
+    new_obj->ptr = ptr;
+    new_obj->marked = false;
+    new_obj->next = heap;
+    heap = new_obj;
+}
+
+void gc_add_root(void** ptr) {
+    roots[root_count++] = ptr;
+}
+
+void gc_mark() {
+    for (int i = 0; i < root_count; i++) {
+        void* root_ptr = *roots[i];
+        Object* curr = heap;
+        while (curr) {
+            if (curr->ptr == root_ptr) {
+                curr->marked = true;
+            }
+            curr = curr->next;
+        }
+    }
+}
+
+void gc_sweep() {
+    Object** curr = &heap;
+    while (*curr) {
+        if (!(*curr)->marked) {
+            Object* temp = *curr;
+            *curr = (*curr)->next;
+            free(temp->ptr);
+            free(temp);
+            printf(""GC: Freed unreachable memory.\n"");
+        } else {
+            (*curr)->marked = false;
+            curr = &(*curr)->next;
+        }
+    }
+}
+
+void gc_collect() {
+    gc_mark();
+    gc_sweep();
+}
+
+int main() {
+    int* a = malloc(sizeof(int));
+    int* b = malloc(sizeof(int));
+    
+    gc_register(a);
+    gc_register(b);
+    
+    gc_add_root((void**)&a);
+    
+    printf(""GC: Running collection...\n"");
+    gc_collect();
+    
+    return 0;
+}",gemini-3.1-flash-lite,c,llm_code,2026-05-15T14:38:30.248276
