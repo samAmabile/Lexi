@@ -56,7 +56,12 @@ LLMCODE = "llm_code"
 HCODE = "human_code"
 
 class Encorporator: 
-    def __init__(self, text=""): 
+    def __init__(self, filename=None): 
+
+        self.text = ""
+        if filename:
+            self.text = open(filename).read()
+
         self.lemmatizer = WordNetLemmatizer()
         self.sia = SentimentIntensityAnalyzer()
         self.stop_words = set(stopwords.words('english'))
@@ -64,7 +69,8 @@ class Encorporator:
         
         for folder in [LLMLANG, NLANG]:
             Path(folder).mkdir(parents=True, exist_ok=True)
-    def encorporate(self, text, llm=True): 
+    def encorporate(self, text, llm=False): 
+
         dataset = []
         sentences = sent_tokenize(text)
         all_tokens = word_tokenize(text)
@@ -135,6 +141,74 @@ class Encorporator:
         path = self.save_dataframe(dataset, filename, llm)
         return str(path)
     
+    def frame(self, text, llm=False): 
+
+        dataset = []
+        sentences = sent_tokenize(text)
+        all_tokens = word_tokenize(text)
+        TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+        fdist, n = self.freq_dist(text)
+        aggregate_sentiment = self.analyze_sentiment(text)['compound']
+        for sent in sentences: 
+
+            sentiment = self.analyze_sentiment(sent)['compound']
+            
+            syntax_tree = self.analyze_syntax(sent)
+            
+            max_depth = syntax_tree["depth"]
+            head_location = syntax_tree["head"]
+            sub_clauses = syntax_tree["sub_clauses"]
+            coordng_conjs = syntax_tree["coord_conjs"]
+            branch_bias = syntax_tree["branching"]
+            balanced = syntax_tree["balanced"]
+
+
+            tokens = word_tokenize(sent)
+            tagged_tokens = nltk.pos_tag(tokens)
+
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = []
+
+            for word, tag in tagged_tokens:
+                wn_pos = get_pos(tag)
+                lemma = self.lemmatizer.lemmatize(word, wn_pos)
+                lemmas.append(lemma)
+            
+            frequencies = [fdist[w]/n for w in set(tokens)] if n > 0 else 0
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                "sentence": sent, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": sentiment,
+                "sentiment deviation": abs(sentiment - aggregate_sentiment),
+                "document ttr": TTR,
+                "depth": max_depth, 
+                "head": head_location,
+                "sub clauses": sub_clauses, 
+                "coord clauses": coordng_conjs, 
+                "branching": branch_bias, 
+                "balanced": balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        df = pd.DataFrame(dataset)
+        return df
+
     def lexical_density(self, tagged_tokens):
         if not tagged_tokens:
             return 0
