@@ -22,7 +22,7 @@ python main.py
 
 #### gemini.py
 
-**'Chat and Automate:'**
+**`Chat and Automate:`**
 
 To Use:
 ``` 
@@ -30,7 +30,7 @@ from gemini import Chat, Automate
 ```
 >Offers both manual *('Chat')* and automated *('Automate')* chat with Gemini models, with automatic capture of history in a csv. 
 
-**'Code:'**
+**`Code:`**
 
 To Use:
 
@@ -43,7 +43,7 @@ Automatically saves sessions to a dataframe.
 
 #### encorporate.py
 
-**'Encorporator:'**
+**`Encorporator:`**
 
 To Use:
 ```
@@ -54,7 +54,7 @@ from encorporate import Encorporator
 *Encorporator Dataframe*
 ![Encorporator dataframe](images/encorporator_dataframe.png)
 
-**'Codecorpus:'**
+**`Codecorpus:`**
 
 To Use:
 ```
