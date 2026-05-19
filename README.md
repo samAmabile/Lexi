@@ -22,7 +22,7 @@ python main.py
 
 #### **`gemini.py`**
 
-* `Chat and Automate:`
+* *`Chat and Automate:`*
 
 To Use:
 ``` 
