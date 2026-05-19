@@ -22,7 +22,7 @@ python main.py
 
 #### gemini.py
 
-* Chat and Automate:
+**Chat and Automate:**
 
 To Use:
 ``` 
@@ -30,7 +30,7 @@ from gemini import Chat, Automate
 ```
 Offers both manual *(Chat)* and automated *(Automate)* chat with Gemini models, with automatic capture of history in a csv. 
 
-* Code:
+**Code:**
 
 To Use:
 
@@ -43,7 +43,7 @@ Automatically saves sessions to a dataframe.
 
 #### encorporate.py
 
-* Encorporator:
+**Encorporator:**
 
 To Use:
 ```
@@ -54,7 +54,7 @@ Builds dataframe corpora from text (string) inputs with lexical, syntactic, and 
 *Encorporator Dataframe*
 ![Encorporator dataframe](images/encorporator_dataframe.png)
 
-* Codecorpus:
+**Codecorpus:**
 
 To Use:
 ```
@@ -65,7 +65,7 @@ Builds dataframes of code with detailed analysis from *TreeSitter* and *Lizard* 
 *Codecorpus Dataframe*
 ![Codecorpus dataframe](images/Codecorpus_dataframe.png)
 
-### dataset\_builder.py 
+#### dataset\_builder.py 
 
 Leverages *gemini.py* and *encorporate.py* along with **NLTK** and **Hugging Face** to build paired datasets of LLM/human content for both prose and code
 
