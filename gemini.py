@@ -3,15 +3,12 @@ from google import genai
 from google.genai import types
 import pandas as pd
 
-import requests
-import json
 import csv
 import os 
 from datetime import datetime
 import random 
 import time
 from pathlib import Path
-from pygments.lexers import guess_lexer
 from magika import Magika
 import re
 

@@ -6,6 +6,20 @@ import os
 
 
 
+def verify_gemini_api(user_input):
+    clean = user_input.strip().strip("'\"")
+
+    if clean in os.environ:
+        print(f"->Retrieved API key from environment variable: {clean}")
+        return os.environ[clean]
+
+    if len(clean) < 39:
+        print("Invalid key length, gemini api will likely fail to connect")
+
+    if not clean.startswith("AIzaSy"):
+        print("Google API key format not detected, ensure you are using correct API key.")
+    
+    return clean
 
 def menu():
 
@@ -20,7 +34,9 @@ def menu():
 
 def cli():
 
-    annotator = data_generator()
+    user_api = input("Enter gemini api key or environment variable name: ")   
+    api_key = verify_gemini_api(user_api)
+    annotator = data_generator(api_key)
 
     while (True): 
 

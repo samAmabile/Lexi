@@ -1,7 +1,5 @@
 #ANALYSIS MODULE FOR PROSE AND CODE
 import nltk
-from nltk.corpus import brown
-from nltk.corpus import treebank
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
@@ -17,17 +15,12 @@ import tree_sitter_html as tshtml
 import tree_sitter_java as tsjava
 import tree_sitter_c as tsc
 from tree_sitter import Language, Parser
-import radon.metrics as pymetrics
 import lizard
 import spacy
 
 import pandas as pd
 import re
 from pathlib import Path
-import csv
-import os
-import random 
-import time
 from datetime import datetime
 import numpy as np
 

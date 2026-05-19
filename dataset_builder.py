@@ -25,7 +25,13 @@ class dataset_builder_ai:
 
     def __init__(self, api_key="GEMINI_API_KEY"):
 
-        self.API = os.environ.get(api_key)
+        api_var = ""
+        if api_key in os.environ:
+            api_var = os.environ.get(api_key)
+        else:
+            api_var = api_key
+
+        self.API = api_var
 
         self.prose_generator = Automate(self.API)
         self.code_generator = Code(self.API)
@@ -228,8 +234,8 @@ class dataset_builder:
         return filenames
 
 class data_generator:
-    def __init__(self):
-        self.ai_generator = dataset_builder_ai()
+    def __init__(self, api):
+        self.ai_generator = dataset_builder_ai(api_key=api)
         self.generator = dataset_builder()
         self.file_annotator = Encorporator()
         self.code_annotator = Codecorpus()

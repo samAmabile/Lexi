@@ -7,21 +7,20 @@
 
 ``` bash
 git clone "https://github.com/samAmabile/Lexi.git"
+cd Lexi
+pip install -r requirements.txt
 ```
 
 **TO RUN:**
 
-1. Ensure your Gemini API key is saved as environment variable called 'GEMINI\_API\_KEY' 
-
-2. Run:
-
 ```bash
-python3 main.py
+python -m spacy download en_core_web_sm
+python main.py
 ```
 
 ### Modules:
 
-### gemini.py
+#### gemini.py
 
 * Chat and Automate:
 
@@ -42,7 +41,7 @@ Offers both manual and automated generation of single code instances (one prompt
 
 Automatically saves sessions to a dataframe. 
 
-### encorporate.py
+#### encorporate.py
 
 * Encorporator:
 
@@ -52,6 +51,7 @@ from encorporate import Encorporator
 ```
 Builds dataframe corpora from text (string) inputs with lexical, syntactic, and semantic data. 
 
+*Encorporator Dataframe*
 ![Encorporator dataframe](images/encorporator_dataframe.png)
 
 * Codecorpus:
@@ -62,6 +62,7 @@ from encorporate import Codecorpus
 ```
 Builds dataframes of code with detailed analysis from *TreeSitter* and *Lizard* libraries
 
+*Codecorpus Dataframe*
 ![Codecorpus dataframe](images/Codecorpus_dataframe.png)
 
 ### dataset\_builder.py 

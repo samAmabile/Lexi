@@ -1,0 +1,16 @@
+pandas 
+nltk
+datasets
+numpy
+lizard
+spacy
+magika
+tree-sitter
+tree-sitter-python
+tree-sitter-cpp
+tree-sitter-c
+tree-sitter-java
+tree-sitter-javascript
+tree-sitter-html
+google-genai
+transformers
