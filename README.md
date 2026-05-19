@@ -28,7 +28,7 @@ To Use:
 ``` 
 from gemini import Chat, Automate 
 ```
->Offers both manual *('Chat')* and automated *('Automate')* chat with Gemini models, with automatic capture of history in a csv. 
+>Offers both manual *(`Chat`)* and automated *(`Automate`)* chat with Gemini models, with automatic capture of history in a csv. 
 
 * *`Code:`*
 
