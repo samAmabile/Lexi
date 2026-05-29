@@ -385,8 +385,36 @@ class data_generator:
 
         return annotated_code
     
-    def augment_prose(self, filename, num_docs):
+    def augment_ai_prose(self, filename, num_docs):
         #TODO: make function that adds the specified number of rows to the dataframe and resaves the file to the same filename
+        num_calls = num_docs // 2 
+
+        filenames = self.ai_generator.make_large_corpus(num_topics=num_calls, calls_per_topic=1)
+        df = pd.read_csv(filename)
+        new_file = filename.split('.')[0]
+        new_data, num_docs = self.cat_csvs(filenames, f"{new_file}_copy")
+
+        combined, total_docs = self.cat_csvs([filename, new_data], new_file)
+
+        return combined, total_docs
+
+    def augment_human_prose(self, filename, num_docs):
+
+        num_calls = num_docs // 3
+
+        new_file = self.generator.build_corpus(num_docs=num_calls)
+
+        new_filename = filename.split('.')[0]
+
+        combined, total_docs = self.cat_csvs([filename, new_file], new_filename)
+
+        return combined, total_docs
+
+
+
+
+
+
 
 
 

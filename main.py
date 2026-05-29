@@ -146,6 +146,22 @@ def cli():
                 if annotated_code:
                     print(f"{file} annotated and saved as {annotated_code}")
 
+        elif x == '4':
+            file_to_augment = input("\nEnter path of filename to augment: ")
+            num_docs = int(input("\nEnter number of documents to augment by: "))
+
+            filename, total_docs = annotator.augment_ai_prose(file_to_augment, num_docs)
+
+            print(f"{file_to_augment} augmented by {num_docs} documents, new total docs: {total_docs}")
+        
+        elif x == '5':
+            file_to_augment = input("\nEnter path of filename to augment: ")
+            num_docs = int(input("\nEnter number of documents to augment by: "))
+
+            filename, total_docs = annotator.augment_human_prose(file_to_augment, num_docs)
+
+            print(f"{file_to_augment} augmented by {num_docs} documents, new total docs: {total_docs}")
+
         else:
             print("Invalid input, please choose an option from the list")
     

@@ -72,6 +72,7 @@ from encorporate import Codecorpus
 To Use:
 ```
 from dataset_builder import data_generator
+from dataset_builder import dataset_builder, dataset_builder_ai
 ```
 
 
