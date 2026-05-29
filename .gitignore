@@ -14,5 +14,6 @@ ENV/
 
 #files
 ignore/
+old_masters/
 
 

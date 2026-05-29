@@ -69,7 +69,7 @@ class Encorporator:
         
         for folder in [LLMLANG, NLANG]:
             Path(folder).mkdir(parents=True, exist_ok=True)
-    def encorporate(self, text, llm=False): 
+    def encorporate_sentences(self, text, llm=False): 
 
         dataset = []
         sentences = sent_tokenize(text)
@@ -114,6 +114,7 @@ class Encorporator:
 
             label = "LLM" if llm else "HUMAN"
             dataset.append({
+                #sentences: sentences
                 "sentence": sent, 
                 "pos": [t.upper() for w, t in tagged_tokens], 
                 "lemmas": lemmas,
@@ -124,6 +125,7 @@ class Encorporator:
                 "sentiment": sentiment,
                 "sentiment deviation": abs(sentiment - aggregate_sentiment),
                 "document ttr": TTR,
+                #syntax tree data - calculate averages/maxes for all sentences in doc:
                 "depth": max_depth, 
                 "head": head_location,
                 "sub clauses": sub_clauses, 
@@ -140,8 +142,201 @@ class Encorporator:
         filename = f"{title}_{date}.csv"
         path = self.save_dataframe(dataset, filename, llm)
         return str(path)
+
+    def clean_text(self, text): 
+        if not text:
+            return ""
+        
+        clean = text.strip().replace('\r', '')
+        clean = clean.replace('#', '').replace('*', '')
+        clean = clean.replace('``', '"').replace("''", '"').replace('“', '"').replace('”', '"').replace('""', '"')
+        clean = re.sub(r'([.,?!:;"])\s*([.,?!:;"])', r'\1', clean)
+        clean = re.sub(r'\s+([.,?!:;])', r'\1', clean)
+
+        return clean.strip()
+
+    def encorporate(self, texts, llm=False): 
+
+        dataset = []
+        for rawtext in texts:
+
+            text = self.clean_text(rawtext)
+
+            sentences = sent_tokenize(text)
+            sentence_lengths = [len(word_tokenize(s)) for s in sentences]
+
+            all_tokens = word_tokenize(text)
+            tagged_tokens = nltk.pos_tag(all_tokens)
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = [self.lemmatizer.lemmatize(word, get_pos(tag)) for word, tag in tagged_tokens]
+
+            TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+            fdist, n = self.freq_dist(text)
+            aggregate_sentiment = self.analyze_sentiment(text)['compound']
+
+            frequencies = [fdist[w]/n for w in set(all_tokens)] if n > 0 else 0
+
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            sent_depths = []
+            head_locations = []
+            sub_clauses = []
+            coord_conjs = []
+            branch_bias = []
+            balances = []
+            sentiments = []
+            
+            for sent in sentences: 
+
+                sent_sentiment = self.analyze_sentiment(sent)['compound']
+                
+                syntax_tree = self.analyze_syntax(sent)
+
+                sent_length = len(sent.split())
+                
+                sent_depths.append(syntax_tree["depth"])
+                head_locations.append(syntax_tree["head"]/sent_length)
+                sub_clauses.append(syntax_tree["sub_clauses"])
+                coord_conjs.append(syntax_tree["coord_conjs"])
+                branch_bias.append(syntax_tree["branching"])
+                balances.append(1 if syntax_tree["balanced"] else 0)
+                sentiments.append(abs(sent_sentiment - aggregate_sentiment))
+
+            
+            max_depth = np.max(sent_depths)
+            mean_head = np.mean(head_locations)
+            mean_subclauses = np.mean(sub_clauses)
+            mean_coordconjs = np.mean(coord_conjs)
+            mean_branchbias = np.mean(branch_bias)
+            pct_balanced = np.sum(balances) / len(sent_depths)
+            std_sentiment = np.std(sentiments)
+
+            mean_sentence = float(np.mean(sentence_lengths)) if sentence_lengths else 0
+            std_sentence = float(np.std(sentence_lengths)) if sentence_lengths else 0
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                #sentences: sentences
+                "text": text, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                "mean sentence length": mean_sentence,
+                "std sentence length": std_sentence,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": aggregate_sentiment,
+                "sentiment deviation": std_sentiment,
+                "ttr": TTR,
+                #syntax tree data - calculate averages/maxes for all sentences in doc:
+                "depth": max_depth, 
+                "head": mean_head,
+                "sub clauses": mean_subclauses, 
+                "coord clauses": mean_coordconjs, 
+                "branching": mean_branchbias, 
+                "balanced": pct_balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        topical_text = " ".join(texts[0].split()[:20])
+        title = self.generate_title(topical_text)
+        date = datetime.now().strftime('%Y-%m-%d_%H%M')
+        filename = f"{title}_{date}.csv"
+        path = self.save_dataframe(dataset, filename, llm)
+        return str(path)
     
-    def frame(self, text, llm=False): 
+    def frame(self, texts, llm=False): 
+
+        dataset = []
+        for text in texts:
+            sentences = sent_tokenize(text)
+            all_tokens = word_tokenize(text)
+            tagged_tokens = nltk.pos_tag(all_tokens)
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = [self.lemmatizer.lemmatize(word, get_pos(tag)) for word, tag in tagged_tokens]
+
+            TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+            fdist, n = self.freq_dist(text)
+            aggregate_sentiment = self.analyze_sentiment(text)['compound']
+
+            frequencies = [fdist[w]/n for w in set(all_tokens)] if n > 0 else 0
+
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            sent_depths = []
+            head_locations = []
+            sub_clauses = []
+            coord_conjs = []
+            branch_bias = []
+            balances = []
+            sentiments = []
+            
+            for sent in sentences: 
+
+                sent_sentiment = self.analyze_sentiment(sent)['compound']
+                
+                syntax_tree = self.analyze_syntax(sent)
+                
+                sent_depths.append(syntax_tree["depth"])
+                head_locations.append(syntax_tree["head"])
+                sub_clauses.append(syntax_tree["sub_clauses"])
+                coord_conjs.append(syntax_tree["coord_conjs"])
+                branch_bias.append(syntax_tree["branching"])
+                balances.append(1 if syntax_tree["balanced"] else 0)
+                sentiments.append(abs(sent_sentiment - aggregate_sentiment))
+
+            
+            max_depth = np.max(sent_depths)
+            mean_head = np.mean(head_locations)
+            mean_subclauses = np.mean(sub_clauses)
+            mean_coordconjs = np.mean(coord_conjs)
+            mean_branchbias = np.mean(branch_bias)
+            pct_balanced = np.sum(balances) / len(sent_depths)
+            std_sentiment = np.std(sentiments)
+
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                #sentences: sentences
+                "text": text, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": aggregate_sentiment,
+                "sentiment deviation": std_sentiment,
+                "ttr": TTR,
+                #syntax tree data - calculate averages/maxes for all sentences in doc:
+                "depth": max_depth, 
+                "head": mean_head,
+                "sub clauses": mean_subclauses, 
+                "coord clauses": mean_coordconjs, 
+                "branching": mean_branchbias, 
+                "balanced": pct_balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        df = pd.DataFrame(dataset)
+        return df
+
+    def frame_sentences(self, text, llm=False): 
 
         dataset = []
         sentences = sent_tokenize(text)
@@ -267,6 +462,7 @@ class Encorporator:
             words = text.split()
             text = " ".join([w for w in words if w.lower() not in self.stop_words])
             text = re.sub(r'[^\w\s-]', '', text.lower()).replace(' ', '_')
+            text = text.replace("'", "").replace('"', '').replace('\n', '').replace('\r', '').replace('$', '')
             if not text: 
                 return datetime.now().strftime('%Y-%m-%d_%H%M')
             return text
@@ -281,6 +477,8 @@ class Encorporator:
         title_set = set([w for w, count in fdist.most_common(5)])
 
         title = "_".join([w for w in words if w in title_set])
+
+        title = title.replace("'", "").replace('"', '').replace('\n', '').replace('\r', '').replace('$', '').replace(' ', '_')
 
         return title
 

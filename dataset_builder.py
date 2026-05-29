@@ -9,6 +9,8 @@ import random
 import time
 from typing import List, cast
 from datetime import datetime
+import csv
+import sys
 
 import nltk 
 from nltk.corpus import brown
@@ -45,16 +47,16 @@ class dataset_builder_ai:
 
         print(f"Chat log saved to {chatname}")
         
-        rawtext = ""
+        rawtexts = []
         if chatname is not None:
             df = pd.read_csv(chatname) 
-            llm_content = '\n'.join(df["Content"].dropna().astype(str).tolist())
-            rawtext = llm_content
+            llm_content = (df["Content"].dropna().astype(str).tolist())
+            rawtexts = llm_content
         else:
             print("Failed to retrieve content from model")
             return None
 
-        corpusname = self.prose_parser.encorporate(rawtext, True)
+        corpusname = self.prose_parser.encorporate(rawtexts, True)
 
         if corpusname is not None: 
             print(f"annotated chat saved to {corpusname}")
@@ -126,7 +128,6 @@ class dataset_builder_ai:
 
     def make_large_corpus(self, topicfile=None, bot_a=None, bot_b=None, num_topics=15, calls_per_topic=5):
         self.prose_generator.set_sysroles(bot_a, bot_b)
-
         topics = []
 
         if topicfile:
@@ -171,46 +172,55 @@ class dataset_builder:
         self.annotator = Encorporator()
         self.code_annotator = Codecorpus()
 
-    def build_corpus(self, categories=list(brown.categories()), num_sents=1500):
+    def build_corpus(self, categories=list(brown.categories()), num_docs=50):
         dataset = []
         
-        brown_categories = categories
-        random.shuffle(brown_categories)
+        brown_fileids = list(brown.fileids(categories=categories))
+        random.shuffle(brown_fileids)
 
-        brown_sents = []
-        for cat in brown_categories:
-            cat_sents = [" ".join(s) for s in brown.sents(categories=cat)]
-            brown_sents.extend(cat_sents[:num_sents])
-            if len(brown_sents) >= num_sents:
+        brown_docs = []
+        for fileid in brown_fileids:
+
+            if len(brown_docs) >= num_docs:
                 break
+            
+            brown_words = list(brown.words(fileids=fileid))
+            doc_text = str(" ".join(brown_words))
+            brown_docs.append(doc_text)
+    
         
-        dataset.extend(brown_sents)
+        dataset.extend(brown_docs)
         
         penn_fileids = list(treebank.fileids())
         random.shuffle(penn_fileids)
 
-        penn_sents = []
+        penn_docs = []
         for file in penn_fileids:
-            file_sents = [" ".join(cast(List[str], s)) for s in treebank.sents(file)]
-            penn_sents.extend(file_sents)
-            if len(penn_sents) >= num_sents:
+
+            if len(penn_docs) >= num_docs:
                 break
+            
 
-        dataset.extend(penn_sents)
+            file_words = [str(w) for w in treebank.words(file)]
+            penn_doc = " ".join(file_words)
+            penn_docs.append(penn_doc)
+
+        dataset.extend(penn_docs)
         
-        web_sents = []
+        web_docs = []
         web_iter = iter(self.webstream.skip(random.randint(0, 500)))
-        while len(web_sents) < num_sents: 
-            sample = next(web_iter)
-            raw = sample['text']
-            sentences = sent_tokenize(raw)
-            web_sents.extend(sentences)
+        while len(web_docs) < num_docs: 
+            try:
+                sample = next(web_iter)
+                raw = sample['text']
+                if raw.strip():
+                    web_docs.append(raw)
+            except StopIteration:
+                break
         
-        dataset.extend(web_sents)
+        dataset.extend(web_docs)
 
-        datastr = '\n'.join(dataset)
-
-        datacsv = self.annotator.encorporate(datastr, llm=False)
+        datacsv = self.annotator.encorporate(dataset, llm=False)
 
         return datacsv
 
@@ -233,8 +243,17 @@ class dataset_builder:
         print(f"Filenames saved: {filenames}")
         return filenames
 
+def count_rows(csvfile):
+
+    csv.field_size_limit(sys.maxsize)
+
+    with open(csvfile, 'r', encoding='utf-8', errors='ignore') as f:
+        reader = csv.reader(f)
+        return sum(1 for row in reader)
+
 class data_generator:
     def __init__(self, api):
+
         self.ai_generator = dataset_builder_ai(api_key=api)
         self.generator = dataset_builder()
         self.file_annotator = Encorporator()
@@ -249,32 +268,43 @@ class data_generator:
 
     
     def cat_csvs(self, filenames, name=None):
-        if isinstance(filenames, str):
-            
-            return filenames, 1
+
+        csv.field_size_limit(sys.maxsize)
+
+        if isinstance(filenames, str): 
+            path = Path(filenames)
+
+            num_rows = count_rows(path)
+            return filenames, num_rows
+
         if len(filenames) <= 1:
-            return filenames[0], 1
+            num_rows = count_rows(filenames[0])
+            return filenames[0], num_rows
+
         first = filenames[0]
         remaining = filenames[1:]
 
         timestamp = datetime.now().strftime('%Y-%m-%d_%H%M')
         combined = f"{name}_{timestamp}.csv"
         
-        no_sentences = 0
+        num_docs = 0
         with open(combined, 'w', encoding='utf-8') as final:
+            writer = csv.writer(final)
             with open(first, 'r', encoding='utf-8') as f1:
-                for line in f1:
-                    final.write(line)
-                    no_sentences += 1
+                reader = csv.reader(f1)
+                for row in reader:
+                    writer.writerow(row)
+                    num_docs += 1
 
             for file in remaining: 
                 with open(file, 'r', encoding='utf-8') as f:
-                    next(f)
-                    for line in f:
-                        final.write(line)
-                        no_sentences += 1
+                    reader = csv.reader(f)
+                    next(reader)
+                    for row in reader:
+                        writer.writerow(row)
+                        num_docs += 1
 
-        return combined, no_sentences-1
+        return combined, num_docs-1
     
     def detect_lang(self, text):
         
@@ -287,14 +317,16 @@ class data_generator:
 
         ai_files = self.ai_generator.make_large_corpus(topicsfile, sys_a, sys_b, no_topics, no_calls)
         
-        ai_dataframe, no_sentences = self.cat_csvs(ai_files, f"{name}_ai_prose")
+        ai_dataframe, num_docs = self.cat_csvs(ai_files, f"{name}_ai_prose")
 
-        human_files = self.generator.build_corpus(num_sents=no_sentences)
+        num_docs = num_docs // 3 if num_docs > 60 else num_docs
 
-        human_dataframe, sentence_count = self.cat_csvs(human_files, f"{name}_human_prose")
+        human_files = self.generator.build_corpus(num_docs=num_docs)
 
-        print(f"{no_sentences} ai prose sentences saved to {ai_dataframe}")
-        print(f"{sentence_count} human prose sentences saved to {human_dataframe}")
+        human_dataframe, doc_count = self.cat_csvs(human_files, f"{name}_human_prose")
+
+        print(f"{num_docs} ai prose documents saved to {ai_dataframe}")
+        print(f"{doc_count} human prose documents saved to {human_dataframe}")
 
         return ai_dataframe, human_dataframe
     
@@ -320,7 +352,7 @@ class data_generator:
             with open(filename, 'r', encoding='utf-8') as f:
                 content += f.read()
                 
-            annotated_file = self.file_annotator.encorporate(content, ai)
+            annotated_file = self.file_annotator.encorporate([content], ai)
             
             print(f"annotated file saved to {annotated_file}")
 
@@ -328,8 +360,6 @@ class data_generator:
         else:
             print("filetype not supported")
             return None
-
-            
 
     def annotate_code_file(self, filename, ai=False): 
 
@@ -354,7 +384,15 @@ class data_generator:
         print(f"annotated code saved to {annotated_code}")
 
         return annotated_code
+    
+    def augment_prose(self, filename, num_docs):
+        #TODO: make function that adds the specified number of rows to the dataframe and resaves the file to the same filename
 
+
+
+
+
+        
 
         
 

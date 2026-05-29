@@ -197,7 +197,23 @@ class Automate:
                 writer.writerow(['Role', 'Content'])
         return 
 
-    def save_chat(self, chatname):
+    def save_chat(self, chatstr):
+
+        def sanitize_filename(filestr):
+
+            if not isinstance(filestr, str):
+                return "untitled"
+            filestr = filestr.strip()
+            filestr = re.sub(r'[\n\r\t]+', '', filestr)
+            filestr = filestr.replace("'", "").replace('"', '')
+            filestr = re.sub(r'[^\w\-.]', '_', filestr)
+            filestr = re.sub(r'_+', '_', filestr)
+
+            filestr = filestr.strip('_')
+
+            return filestr
+        
+        chatname = sanitize_filename(chatstr)
         filename = chatname+".csv" if not chatname.endswith(".csv") else chatname
         self.verify_path(BOTLOGS)
         path = Path(BOTLOGS) / filename

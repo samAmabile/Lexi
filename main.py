@@ -3,6 +3,7 @@ from dataset_builder import dataset_builder, dataset_builder_ai, data_generator
 import pandas as pd 
 import numpy as np 
 import os 
+from pathlib import Path
 
 
 
@@ -21,12 +22,23 @@ def verify_gemini_api(user_input):
     
     return clean
 
+def make_dataset_dir(dirname, filename):
+    dirname = Path(".") / dirname
+    dirname.mkdir(parents=True, exist_ok=True)
+
+    filepath = Path(filename)
+
+    if filepath.exists:
+        filepath.rename(dirname / filepath.name)
+
 def menu():
 
     print("Main Menu: ")
     print("1. Create LLM and Human PROSE data")
     print("2. Create LLM and Human CODE data")
     print("3. Convert file(s) to annotated data frame")
+    print("4. Augment existing LLM dataset")
+    print("5. Augment existing Human dataset")
 
     choice = input("\nEnter your choice, or enter 'x' to exit: ")
 
@@ -46,14 +58,16 @@ def cli():
             print("Exiting...")
             return 
 
-        elif x == 1: 
+        elif x == '1': 
 
             num_topics = input("\nEnter number of topics: ")
             num_calls = input("\nEnter number of calls to model per topic: ")
             label = input("\nEnter name for dataset: ")
+            dir_name = Path(".") / label
+            dir_name.mkdir(parents=True, exist_ok=True)
             sysprompts = input("\nDo you want to customize the system prompt for one or both of the LLM bots?[Y/n]: ")
             bots = []
-            if sysprompts.lower == 'Y': 
+            if sysprompts.lower() == 'y': 
                 bot_a = input("\nEnter system prompt for bot one: ")
                 bot_b = input("\nEnter system prompt for bot two: ")
                 bots.append(bot_a)
@@ -73,14 +87,25 @@ def cli():
 
             ai_prose, human_prose = annotator.generate_prose(name=label, sys_a=bot_one, sys_b=bot_two, no_topics=int(num_topics), no_calls=int(num_calls))
 
-        elif x == 2:
+            ai_src = Path(ai_prose)
+            human_src = Path(human_prose)
+
+            if ai_src.exists():
+                ai_src.rename(dir_name / ai_src.name)
+            if human_src.exists():
+                human_src.rename(dir_name / human_src.name)
+
+            print(f"human and ai datasets created and saved to {str(dir_name)} folder")
+
+        elif x == '2':
             
             num_rows = input("\nEnter number of code instances to be created per dataset (ai and human): ")
             label = input("\nEnter name for dataset: ")
 
             ai_code, human_code = annotator.generate_code(name=label, rows=int(num_rows))
 
-        elif x == 3: 
+
+        elif x == '3': 
 
             code_files = []
             code_bools = []
