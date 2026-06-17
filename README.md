@@ -15,15 +15,15 @@ topic_id,source,text,pos,lemmas,mean sentence length,std sentence length,lexical
 * `lemmas`: Lemmatized tokens.
 * `mean sentence length`: Avg tokens per sentence.
 * `std sentence length`: Standard Deviation of tokens per sentence.
-* `lexical density`: $\frac{Content Words}{Total Words}$.
+* `lexical density`: $\frac{\text{Content Words}}{\text{Total Words}}$.
 * `variance`: Token frequency variance across document.
-* `burstiness`: $\frac{Hapaxes}{Total tokens}$.
-* `saliency`: $\frac{\sum Frequencies}{Types}$.
+* `burstiness`: $\frac{\text{Hapaxes}}{\text{Total tokens}}$.
+* `saliency`: $\frac{\sum \text{Frequencies}}{\text{Types}}$.
 * `sentiment`: Sentiment polarity score.
-* `sentiment deviation`: $|Sentence sentiment - Document sentiment|$.
+* `sentiment deviation`: $|\text{Sentence sentiment} - \text{Document sentiment}|$.
 * `ttr`: Type-Token Ratio (lexical diversity).
 * `depth`: Max depth of syntax trees. 
-* `head`: $\frac{\sum_{sentences} Head location}{Num sentences}$ (Normalized).
+* `head`: $\frac{\sum_{\text{sentences}} \text{Head location}}{\text{Num sentences}}$ (Normalized).
 * `sub clauses`: Avg number of suboordinate clauses per sentence.
 * `coord clauses`: Avg number of coordinating conjunctions per sentence.
 * `branching` : Left/right bias of branching in syntax trees across document.
