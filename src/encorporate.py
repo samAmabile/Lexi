@@ -1,0 +1,1081 @@
+#ANALYSIS MODULE FOR PROSE AND CODE
+import nltk
+from nltk.corpus import stopwords
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+from nltk import sent_tokenize 
+from nltk import word_tokenize 
+from nltk.sentiment import SentimentIntensityAnalyzer
+
+#from tree_sitter_language_pack import get_parser
+import tree_sitter_python as tspy
+import tree_sitter_cpp as tscpp
+import tree_sitter_javascript as tsjs
+import tree_sitter_html as tshtml
+import tree_sitter_java as tsjava
+import tree_sitter_c as tsc
+from tree_sitter import Language, Parser
+import lizard
+import spacy
+
+import pandas as pd
+import re
+from pathlib import Path
+from datetime import datetime
+import numpy as np
+from numpy import log2 
+import sys
+from collections import Counter
+import io
+from io import StringIO
+from flake8.api import legacy as linter
+from unittest.mock import patch
+import tokenize
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data"
+LANG_DIR = DATA_DIR / "language"
+CODE_DIR = DATA_DIR / "code"
+
+
+#lemmatizer = WordNetLemmatizer()
+#sia = SentimentIntensityAnalyzer()
+
+def get_pos(tag): 
+    if tag.startswith('J'):
+        return wordnet.ADJ
+    elif tag.startswith('V'):
+        return wordnet.VERB
+    elif tag.startswith('N'):
+        return wordnet.NOUN
+    elif tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return wordnet.NOUN
+
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger_eng')
+nltk.download('wordnet')
+nltk.download('vader_lexicon')
+
+#stop_words = set(stopwords.words('english'))
+
+LLMLANG = LANG_DIR / "llm_language"
+NLANG = LANG_DIR / "natural_language"
+LLMCODE = CODE_DIR / "llm_code"
+HCODE = CODE_DIR / "human_code"
+
+class Encorporator: 
+    def __init__(self, filename=None): 
+
+        self.text = ""
+        if filename:
+            self.text = open(filename).read()
+
+        self.lemmatizer = WordNetLemmatizer()
+        self.sia = SentimentIntensityAnalyzer()
+        self.stop_words = set(stopwords.words('english'))
+        self.nlp = spacy.load("en_core_web_sm")
+        
+        for folder in [LLMLANG, NLANG]:
+            Path(folder).mkdir(parents=True, exist_ok=True)
+    def encorporate_sentences(self, text, llm=False): 
+
+        dataset = []
+        sentences = sent_tokenize(text)
+        all_tokens = word_tokenize(text)
+        TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+        fdist, n = self.freq_dist(text)
+        aggregate_sentiment = self.analyze_sentiment(text)['compound']
+        for sent in sentences: 
+
+            sentiment = self.analyze_sentiment(sent)['compound']
+            
+            syntax_tree = self.analyze_syntax(sent)
+            
+            max_depth = syntax_tree["depth"]
+            head_location = syntax_tree["head"]
+            sub_clauses = syntax_tree["sub_clauses"]
+            coordng_conjs = syntax_tree["coord_conjs"]
+            branch_bias = syntax_tree["branching"]
+            balanced = syntax_tree["balanced"]
+
+
+            tokens = word_tokenize(sent)
+            tagged_tokens = nltk.pos_tag(tokens)
+
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = []
+
+            for word, tag in tagged_tokens:
+                wn_pos = get_pos(tag)
+                lemma = self.lemmatizer.lemmatize(word, wn_pos)
+                lemmas.append(lemma)
+            
+            frequencies = [fdist[w]/n for w in set(tokens)] if n > 0 else 0
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                #sentences: sentences
+                "sentence": sent, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": sentiment,
+                "sentiment deviation": abs(sentiment - aggregate_sentiment),
+                "document ttr": TTR,
+                #syntax tree data - calculate averages/maxes for all sentences in doc:
+                "depth": max_depth, 
+                "head": head_location,
+                "sub clauses": sub_clauses, 
+                "coord clauses": coordng_conjs, 
+                "branching": branch_bias, 
+                "balanced": balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        topical_text = " ".join(text.split()[:20])
+        title = self.generate_title(topical_text)
+        date = datetime.now().strftime('%Y-%m-%d_%H%M')
+        filename = f"{title}_{date}.csv"
+        path = self.save_dataframe(dataset, filename, llm)
+        return str(path)
+
+    def clean_text(self, text): 
+        if not text:
+            return ""
+        
+        clean = text.strip().replace('\r', '')
+        clean = clean.replace('#', '').replace('*', '')
+        clean = clean.replace('``', '"').replace("''", '"').replace('“', '"').replace('”', '"').replace('""', '"')
+        clean = re.sub(r'([.,?!:;"])\s*([.,?!:;"])', r'\1', clean)
+        clean = re.sub(r'\s+([.,?!:;])', r'\1', clean)
+        clean = re.sub(r'([([{\[“"\$])\s+', r'\1', clean)
+        clean = re.sub(r'\b\s+([\'’](?:d|s|t|m|re|ve|ll))\b', r'\1', clean)
+        clean = re.sub(r'\s+', ' ', clean)
+
+        return clean.strip()
+
+    def encorporate(self, texts, llm=False): 
+
+        dataset = []
+        for rawtext in texts:
+
+            text = self.clean_text(rawtext)
+
+            if text == "":
+                continue
+
+            sentences = sent_tokenize(text)
+            sentence_lengths = [len(word_tokenize(s)) for s in sentences]
+
+            all_tokens = word_tokenize(text)
+            tagged_tokens = nltk.pos_tag(all_tokens)
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = [self.lemmatizer.lemmatize(word, get_pos(tag)) for word, tag in tagged_tokens]
+
+            TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+            fdist, n = self.freq_dist(text)
+            aggregate_sentiment = self.analyze_sentiment(text)['compound']
+
+            frequencies = [fdist[w]/n for w in set(all_tokens)] if n > 0 else 0
+
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            sent_depths = []
+            head_locations = []
+            sub_clauses = []
+            coord_conjs = []
+            branch_bias = []
+            balances = []
+            sentiments = []
+            
+            for sent in sentences:
+
+                sent_sentiment = self.analyze_sentiment(sent)['compound']
+                
+                syntax_tree = self.analyze_syntax(sent)
+
+                sent_length = len(sent.split())
+                
+                sent_depths.append(syntax_tree["depth"])
+                head_locations.append(syntax_tree["head"]/sent_length)
+                sub_clauses.append(syntax_tree["sub_clauses"])
+                coord_conjs.append(syntax_tree["coord_conjs"])
+                branch_bias.append(syntax_tree["branching"])
+                balances.append(1 if syntax_tree["balanced"] else 0)
+                sentiments.append(abs(sent_sentiment - aggregate_sentiment))
+
+            
+            max_depth = np.max(sent_depths) if len(sent_depths) > 0 else 0
+            mean_head = np.mean(head_locations) if len(head_locations) > 0 else 0
+            mean_subclauses = np.mean(sub_clauses) if len(sub_clauses) > 0 else 0 
+            mean_coordconjs = np.mean(coord_conjs) if len(coord_conjs) > 0 else 0
+            mean_branchbias = np.mean(branch_bias) if len(branch_bias) > 0 else 0 
+            balance = np.sum(balances) if len(balances) > 0 else 0
+
+            pct_balanced = (balance / len(sent_depths)) if len(sent_depths) > 0 else 0
+            std_sentiment = np.std(sentiments) if len(sentiments) > 0 else 0
+
+            mean_sentence = float(np.mean(sentence_lengths)) if sentence_lengths else 0
+            std_sentence = float(np.std(sentence_lengths)) if sentence_lengths else 0
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                #text metrics:
+                "text": text, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                #document level metrics:
+                "mean sentence length": mean_sentence,
+                "std sentence length": std_sentence,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": aggregate_sentiment,
+                "sentiment deviation": std_sentiment,
+                "ttr": TTR,
+                #syntax tree data (averages/maxes/% for all sentences):
+                "depth": max_depth, 
+                "head": mean_head,
+                "sub clauses": mean_subclauses, 
+                "coord clauses": mean_coordconjs, 
+                "branching": mean_branchbias, 
+                "balanced": pct_balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        topical_text = " ".join(texts[0].split()[:20])
+        title = self.generate_title(topical_text)
+        date = datetime.now().strftime('%Y-%m-%d_%H%M')
+        filename = f"{title}_{date}.csv"
+        path = self.save_dataframe(dataset, filename, llm)
+        return str(path)
+    
+    def frame(self, texts, llm=False): 
+
+        dataset = []
+        for rawtext in texts:
+
+            text = self.clean_text(rawtext)
+
+            sentences = sent_tokenize(text)
+            sentence_lengths = [len(word_tokenize(s)) for s in sentences]
+
+            all_tokens = word_tokenize(text)
+            tagged_tokens = nltk.pos_tag(all_tokens)
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = [self.lemmatizer.lemmatize(word, get_pos(tag)) for word, tag in tagged_tokens]
+
+            TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+            fdist, n = self.freq_dist(text)
+            aggregate_sentiment = self.analyze_sentiment(text)['compound']
+
+            frequencies = [fdist[w]/n for w in set(all_tokens)] if n > 0 else 0
+
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            sent_depths = []
+            head_locations = []
+            sub_clauses = []
+            coord_conjs = []
+            branch_bias = []
+            balances = []
+            sentiments = []
+            
+            for sent in sentences: 
+
+                sent_sentiment = self.analyze_sentiment(sent)['compound']
+                
+                syntax_tree = self.analyze_syntax(sent)
+
+                sent_length = len(sent.split())
+                
+                sent_depths.append(syntax_tree["depth"])
+                head_locations.append(syntax_tree["head"]/sent_length)
+                sub_clauses.append(syntax_tree["sub_clauses"])
+                coord_conjs.append(syntax_tree["coord_conjs"])
+                branch_bias.append(syntax_tree["branching"])
+                balances.append(1 if syntax_tree["balanced"] else 0)
+                sentiments.append(abs(sent_sentiment - aggregate_sentiment))
+
+            
+            max_depth = np.max(sent_depths)
+            mean_head = np.mean(head_locations)
+            mean_subclauses = np.mean(sub_clauses)
+            mean_coordconjs = np.mean(coord_conjs)
+            mean_branchbias = np.mean(branch_bias)
+            pct_balanced = np.sum(balances) / len(sent_depths)
+            std_sentiment = np.std(sentiments)
+
+            mean_sentence = float(np.mean(sentence_lengths)) if sentence_lengths else 0
+            std_sentence = float(np.std(sentence_lengths)) if sentence_lengths else 0
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                #text metrics:
+                "text": text, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                #document level metrics:
+                "mean sentence length": mean_sentence,
+                "std sentence length": std_sentence,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": aggregate_sentiment,
+                "sentiment deviation": std_sentiment,
+                "ttr": TTR,
+                #syntax tree data (averages/maxes/% for all sentences):
+                "depth": max_depth, 
+                "head": mean_head,
+                "sub clauses": mean_subclauses, 
+                "coord clauses": mean_coordconjs, 
+                "branching": mean_branchbias, 
+                "balanced": pct_balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        df = pd.DataFrame(dataset)
+        return df
+
+    def frame_sentences(self, text, llm=False): 
+
+        dataset = []
+        sentences = sent_tokenize(text)
+        all_tokens = word_tokenize(text)
+        TTR = len(set(all_tokens)) / len(all_tokens) if len(all_tokens) > 0 else 0
+        fdist, n = self.freq_dist(text)
+        aggregate_sentiment = self.analyze_sentiment(text)['compound']
+        for sent in sentences: 
+
+            sentiment = self.analyze_sentiment(sent)['compound']
+            
+            syntax_tree = self.analyze_syntax(sent)
+            
+            max_depth = syntax_tree["depth"]
+            head_location = syntax_tree["head"]
+            sub_clauses = syntax_tree["sub_clauses"]
+            coordng_conjs = syntax_tree["coord_conjs"]
+            branch_bias = syntax_tree["branching"]
+            balanced = syntax_tree["balanced"]
+
+
+            tokens = word_tokenize(sent)
+            tagged_tokens = nltk.pos_tag(tokens)
+
+            lexical_density = self.lexical_density(tagged_tokens)
+
+            lemmas = []
+
+            for word, tag in tagged_tokens:
+                wn_pos = get_pos(tag)
+                lemma = self.lemmatizer.lemmatize(word, wn_pos)
+                lemmas.append(lemma)
+            
+            frequencies = [fdist[w]/n for w in set(tokens)] if n > 0 else 0
+            variance = float(np.var(frequencies))
+            mean_freq = float(np.mean(frequencies))
+            freq_sd = float(np.std(frequencies))
+
+            burstiness = freq_sd / mean_freq if mean_freq != 0 else 0
+            
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+            label = "LLM" if llm else "HUMAN"
+            dataset.append({
+                "sentence": sent, 
+                "pos": [t.upper() for w, t in tagged_tokens], 
+                "lemmas": lemmas,
+                "lexical density": lexical_density,
+                "variance": variance,
+                "burstiness": burstiness,
+                "saliency": sum(frequencies)/len(frequencies) if frequencies else 0,
+                "sentiment": sentiment,
+                "sentiment deviation": abs(sentiment - aggregate_sentiment),
+                "document ttr": TTR,
+                "depth": max_depth, 
+                "head": head_location,
+                "sub clauses": sub_clauses, 
+                "coord clauses": coordng_conjs, 
+                "branching": branch_bias, 
+                "balanced": balanced,
+                "label": label,
+                "timestamp": timestamp
+                })
+        
+        df = pd.DataFrame(dataset)
+        return df
+
+    def lexical_density(self, tagged_tokens):
+        if not tagged_tokens:
+            return 0
+
+        tags = {
+            'NN', 'NNS', 'NNP', 'NNPS',
+            'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ',
+            'JJ', 'JJR', 'JJS', 
+            'RB', 'RBR', 'RBS'
+            }
+
+        relevant_words = [w for w, t in tagged_tokens if t in tags]
+
+        lex_density = len(relevant_words) / len(tagged_tokens)
+
+        return lex_density
+    
+    def analyze_syntax(self, sentence):
+        doc = self.nlp(sentence)
+        sent = list(doc.sents)[0]
+        root = sent.root
+        
+        sys.setrecursionlimit(10000)
+        def dfs(node):
+            if not list(node.children):
+                return 1
+            return 1 + max(dfs(child) for child in node.children)
+
+        max_depth = dfs(root)
+        head = root.i / len(sent)
+        
+        subordinate_clauses = sum(1 for word in sent if word.dep_ in ('advcl', 'ccomp', 'relcl'))
+        coordinating_conjunctions = sum(1 for word in sent if word.dep_ == 'cc')
+
+        left_nodes = sum(len(list(token.lefts)) for token in sent)
+        right_nodes = sum(len(list(token.rights)) for token in sent) 
+
+        bias = (right_nodes - left_nodes) / len(sent)
+
+        metrics = {
+                "depth": max_depth, 
+                "head": head, 
+                "sub_clauses": subordinate_clauses, 
+                "coord_conjs": coordinating_conjunctions, 
+                "branching": bias, 
+                "balanced": abs(left_nodes - right_nodes) <= 2
+                }
+
+        return metrics
+
+    def generate_title(self, text):
+
+        if not text:
+            return datetime.now().strftime('%Y-%m-%d_%H%M')
+
+        if len(text.split()) < 6:
+            words = text.split()
+            text = " ".join([w for w in words if w.lower() not in self.stop_words])
+            text = re.sub(r'[^\w\s-]', '', text.lower()).replace(' ', '_')
+            text = text.replace("'", "").replace('"', '').replace('\n', '').replace('\r', '').replace('$', '')
+            if not text: 
+                return datetime.now().strftime('%Y-%m-%d_%H%M')
+            return text
+
+        words = re.findall(r'\w+', text.lower())
+
+        tagged = nltk.pos_tag([w for w in words if w not in self.stop_words])
+        lemmas = [self.lemmatizer.lemmatize(w, get_pos(t)) for w, t in tagged]
+
+        fdist = nltk.FreqDist(lemmas)
+
+        title_set = set([w for w, count in fdist.most_common(5)])
+
+        title = "_".join([w for w in words if w in title_set])
+
+        title = title.replace("'", "").replace('"', '').replace('\n', '').replace('\r', '').replace('$', '').replace(' ', '_')
+
+        return title
+
+    def save_dataframe(self, dataset, filename, llm=True):
+        folder = LLMLANG if llm else NLANG
+        #Path(folder).mkdir(parents=True, exist_ok=True)
+        filename = filename+".csv" if not filename.endswith(".csv") else filename
+
+        df = pd.DataFrame(dataset)
+        path = Path(folder) / filename
+        master = Path(folder) / "master.csv"
+
+        header_bool = master.exists()
+
+        df.to_csv(path, index=False)
+        df.to_csv(master, mode='a', index=False, header=not header_bool)
+
+        return path
+
+    def freq_dist(self, text): 
+        tokens = [w.lower() for w in re.findall(r'\w+', text) if w not in self.stop_words]
+
+        fdist = nltk.FreqDist(tokens)
+        num_words = len(tokens)
+
+        return fdist, num_words
+    
+    def analyze_sentiment(self, text):
+        
+        sentiment = self.sia.polarity_scores(text)
+
+        return sentiment
+
+class Codecorpus:
+    def __init__(self, code=""): 
+        self.langmap = {
+                "py": "python", "python": "python", "ipynb": "python",
+                "cpp": "cpp", "js": "javascript", "java": "java", 
+                "c": "c"
+                }
+        self.langtrees = {
+                "py" : Language(tspy.language()), 
+                "python": Language(tspy.language()),
+                "cpp": Language(tscpp.language()),
+                "c": Language(tsc.language()), 
+                "js": Language(tsjs.language()),
+                "javascript": Language(tsjs.language()), 
+                "java": Language(tsjava.language()),
+                "html": Language(tshtml.language())
+                }
+        for folder in [LLMCODE, HCODE]:
+            Path(folder).mkdir(parents=True, exist_ok=True)
+
+    def tokenize_code(self, codestr):
+        tokens = []
+
+        bytestream = io.BytesIO(codestr.encode('utf-8'))
+
+        try:
+            for tok in tokenize.tokenize(bytestream.readline):
+
+                if tok.type in (tokenize.ENDMARKER, tokenize.ENCODING):
+                    continue
+
+                if tok.type in (tokenize.NL, tokenize.NEWLINE):
+                    continue
+
+                tokens.append(tok.string)
+        except tokenize.TokenError: 
+            #regex for valid token patterns:
+            #strings
+            #Numbers
+            #identifiers/variables
+            #operators
+            #punctionation 
+            token_regex = re.compile(
+            r'(["]{3}.*?["]{3}|[\']{3}.*?[\']{3}|"[^"\\]*(?:\\.[^"\\]*)*"|\'[^\'\\]*(?:\\.[^\'\\]*)*\'' 
+            r'|\d+(?:\.\d*)?|\.\d+'
+            r'|[a-zA-Z_]\w*'
+            r'|[-+*/%=<>!&|^~]+'
+            r'|[^\s\w])'
+            )
+            tokens = token_regex.findall(codestr)
+
+        return tokens
+    
+    def comment_ratio(self, codestr, lang):
+        #TODO: Come up with a scheme to calculate comments/loc for each language
+        comment_key = {
+                'py': {'#': 1, '"""': 0.5, "'''": 0.5},
+                'cpp': {'//': 1, '/*': 0.5, '*/': 0.5},
+                'c': {'//': 1, '/*': 0.5, '*/': 0.5},
+                'java': {'//': 1, '/*': 0.5, '*/': 0.5}
+        }
+        
+        comment_set = comment_key[lang]
+        #e.g comment_key['py'] = {'#': 1, '"""': 0.5, "'''": 0.5}
+        num_comments = 0.0
+        lines = codestr.splitlines()
+        num_lines = len(lines)
+        for line in lines: 
+            for key in comment_set.keys():
+                if key in line:
+                    num_comments += comment_set[key]
+
+        comment_density = num_comments / num_lines
+
+        return float(comment_density)
+
+    def analyze(self, codebase, lang, llm=True):
+
+        label = "LLM" if llm else "HUMAN"
+        dataset = []
+
+        parser_lang = self.langtrees[lang.strip().lower()]
+        parser = Parser(parser_lang)
+
+        for code in codebase:
+
+            complexity, lines, num_tokens = self.metrics(code, lang)
+
+
+            tree = parser.parse(bytes(code, 'utf-8'))
+            tree_stats = self.ast_stats(tree, lines)
+
+
+            tokens = tree_stats["tokens"]
+
+            ttr = self.get_ttr(tokens)
+
+            shannon_ent = self.shannon_h(tokens) 
+            blankline_ratio, blankspace_var, blankline_cv, blankspace_ratio = self.count_whitespace(code)
+            linter_score = self.linter_score(code)
+
+            if tree_stats["nodes"] == -1:
+                continue
+
+            num_nodes = tree_stats["nodes"]
+            max_depth = tree_stats["depth"]
+            avg_var_len = tree_stats["avg_var_len"]
+            control_density = tree_stats["control_density"]
+            num_functions = tree_stats["functions"]
+            nest_depth = tree_stats["nest_depth"]
+            comment_density = tree_stats["comment_density"]
+            
+            token_density = num_tokens / lines if lines > 0 else 0 
+            node_density = num_nodes / num_tokens if num_tokens > 0 else 0
+            function_density = num_functions / lines if lines > 0 else 0 
+            node_ratio = num_nodes / lines if lines > 0 else 0
+            burstiness = complexity / lines if lines > 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M')
+
+            analysis = {
+                    "src": code,
+                    "lang": lang,
+                    "loc": lines, 
+                    "no. tokens": num_tokens, 
+                    "no. nodes": num_nodes, 
+                    "no. functions": num_functions, 
+                    "ttr": ttr,
+                    "avg variable length": avg_var_len, 
+                    "max depth": max_depth,
+                    "nested depth": nest_depth,
+                    "control density": control_density, 
+                    "complexity": complexity,
+                    "token density": token_density,
+                    "node density": node_density,
+                    "node ratio": node_ratio,
+                    "function density": function_density,
+                    "blankline ratio": blankline_ratio,
+                    "blankline variance": blankline_cv,
+                    "blankspace ratio": blankspace_ratio,
+                    "blankspace variance": blankspace_var, 
+                    "burstiness": burstiness,
+                    "shannon entropy": shannon_ent,
+                    "linter score": linter_score,
+                    "comment density": comment_density,
+                    "label": label,
+                    "timestamp": timestamp
+                    }
+            dataset.append(analysis)
+        
+        savetime = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+        filename = f"{label}_{lang}_{savetime}.csv"
+        path = self.save_dataframe(dataset, filename, llm)
+
+        return str(path)
+    
+    def get_ttr(self, tokens): 
+
+        if not tokens:
+            return 0.0
+
+        total_tokens = len(tokens)
+        total_types = len(set(tokens))
+        
+        ttr = total_tokens / total_types
+
+        return float(ttr) 
+
+    def frame(self, codebase, lang, llm=True):
+
+        label = "LLM" if llm else "HUMAN"
+        dataset = []
+
+        parser_lang = self.langtrees[lang.strip().lower()]
+        parser = Parser(parser_lang)
+
+        for code in codebase:
+
+            complexity, lines, num_tokens = self.metrics(code, lang)
+
+
+            tree = parser.parse(bytes(code, 'utf-8'))
+            tree_stats = self.ast_stats(tree, lines)
+
+
+            tokens = tree_stats["tokens"]
+            
+            ttr = self.get_ttr(tokens)
+            shannon_ent = self.shannon_h(tokens) 
+            blankline_ratio, blankspace_var, blankline_cv, blankspace_ratio = self.count_whitespace(code)
+            linter_score = self.linter_score(code)
+
+            if tree_stats["nodes"] == -1:
+                continue
+
+            num_nodes = tree_stats["nodes"]
+            max_depth = tree_stats["depth"]
+            avg_var_len = tree_stats["avg_var_len"]
+            control_density = tree_stats["control_density"]
+            num_functions = tree_stats["functions"]
+            nest_depth = tree_stats["nest_depth"]
+            comment_density = tree_stats["comment_density"]
+            
+            token_density = num_tokens / lines if lines > 0 else 0
+            node_density = num_nodes / num_tokens if num_tokens > 0 else 0
+            function_density = num_functions / lines if lines > 0 else 0 
+            node_ratio = num_nodes / lines if lines > 0 else 0
+            burstiness = complexity / lines if lines > 0 else 0
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H%M')
+
+            analysis = {
+                    "src": code,
+                    "lang": lang,
+                    "loc": lines, 
+                    "no. tokens": num_tokens, 
+                    "no. nodes": num_nodes, 
+                    "no. functions": num_functions, 
+                    "ttr": ttr,
+                    "avg variable length": avg_var_len, 
+                    "max depth": max_depth,
+                    "nested depth": nest_depth,
+                    "control density": control_density, 
+                    "complexity": complexity,
+                    "token density": token_density,
+                    "node density": node_density,
+                    "node ratio": node_ratio,
+                    "function density": function_density,
+                    "blankline ratio": blankline_ratio,
+                    "blankline variance": blankline_cv,
+                    "blankspace ratio": blankspace_ratio,
+                    "blankspace variance": blankspace_var, 
+                    "burstiness": burstiness,
+                    "shannon entropy": shannon_ent,
+                    "linter score": linter_score,
+                    "comment density": comment_density,
+                    "label": label,
+                    "timestamp": timestamp
+                    }
+            dataset.append(analysis)
+        
+        df = pd.DataFrame(dataset)
+        return df
+
+    def analyze_file(self, code, lang, llm=True):
+
+        label = "LLM" if llm else "HUMAN"
+        dataset = []
+
+        parser_lang = self.langtrees[lang.strip().lower()]
+        parser = Parser(parser_lang)
+
+
+        complexity, lines, num_tokens = self.metrics(code, lang)
+
+        
+
+        tree = parser.parse(bytes(code, 'utf-8'))
+        tree_stats = self.ast_stats(tree, lines)
+
+        tokens = tree_stats["tokens"]
+        ttr = self.get_ttr(tokens)
+        shannon_ent = self.shannon_h(tokens) 
+        blankline_ratio, blankspace_var, blankline_cv, blankspace_ratio = self.count_whitespace(code)
+        linter_score = self.linter_score(code)
+
+        num_nodes = tree_stats["nodes"]
+        max_depth = tree_stats["depth"]
+        avg_var_len = tree_stats["avg_var_len"]
+        control_density = tree_stats["control_density"]
+        num_functions = tree_stats["functions"]
+        nest_depth = tree_stats["nest_depth"]
+        comment_density= tree_stats["comment_density"]
+        
+        token_density = num_tokens / lines if lines > 0 else 0
+        node_density = num_nodes / num_tokens if num_tokens > 0 else 0
+        function_density = num_functions / lines if lines > 0 else 0
+        node_ratio = num_nodes / lines if lines > 0 else 0
+        burstiness = complexity / lines if lines > 0 else 0
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H%M')
+
+        analysis = {
+                "src": code,
+                "lang": lang,
+                "loc": lines, 
+                "no. tokens": num_tokens, 
+                "no. nodes": num_nodes, 
+                "no. functions": num_functions, 
+                "ttr": ttr,
+                "avg variable length": avg_var_len, 
+                "max depth": max_depth,
+                "nested depth": nest_depth,
+                "control density": control_density, 
+                "complexity": complexity,
+                "token density": token_density,
+                "node density": node_density,
+                "node ratio": node_ratio,
+                "function density": function_density,
+                "blankline ratio": blankline_ratio,
+                "blankline variance": blankline_cv,
+                "blankspace ratio": blankspace_ratio,
+                "blankspace variance": blankspace_var, 
+                "burstiness": burstiness,
+                "shannon entropy": shannon_ent,
+                "linter score": linter_score,
+                "comment density": comment_density,
+                "label": label,
+                "timestamp": timestamp
+                }
+        dataset.append(analysis)
+        
+        savetime = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+        filename = f"{label}_{lang}_{savetime}.csv"
+        path = self.save_dataframe(dataset, filename, llm)
+
+        return str(path)
+    
+    def ast_stats(self, tree, LoC):
+        nesting = {"for_statement", "while_statement", "do_statement"}
+        control = {"if_statement", "for_statement", "while", "while_statement", "case"}
+        function_ids = {"function_definition", "method_definition", "method_declaration", "function_item", "constructor_declaration"}
+        parents = {"declarator", "assignment", "paramater", "for_in", "pointer", "field", "variable_declarator", "assignment_expression", "paramater_declaration"}
+
+        stats = {
+            "nodes": 0, 
+            "depth": 0, 
+            "nest_depth": 0,
+            "var_lengths": [], 
+            "avg_var_len": 0,
+            "control_blocks": 0, 
+            "control_density": 0,
+            "functions": 0,
+            "comments": 0,
+            "tokens": []
+            }
+
+        limit_reached = False
+        NODE_LIMIT = 5000
+        MAX_DEPTH = 800
+
+        def dfs(node, depth, nested_depth):
+            nonlocal limit_reached
+            if limit_reached:
+                return 
+
+            stats["nodes"] += 1
+
+            if depth > MAX_DEPTH or stats["nodes"] > NODE_LIMIT:
+                limit_reached = True
+                return
+
+            
+            stats["depth"] = max(stats["depth"], depth)
+
+            cur_nesting = nested_depth + 1 if node.type in nesting else nested_depth
+            stats["nest_depth"] = max(stats["nest_depth"], cur_nesting)
+
+            if node.child_count == 0:
+                token_text = node.text.decode('utf-8', errors='ignore').strip()
+                if token_text: 
+                    stats["tokens"].append(token_text)
+            
+            if node.type == "comment" or "docstring" in node.type:
+                stats["comments"] += 1
+
+            elif node.type == "expression_statement":
+                child = node.child(0)
+                if child and child.type in ("string", "string_literal"):
+                    start = node.start_point[0]
+                    end = node.end_point[0]
+                    num_lines = (end - start) + 1
+                    stats["comments"] += num_lines
+
+            if node.type == "identifier":
+                parent = node.parent
+                if parent:
+                    parent_type = parent.type
+
+                    if any(p in parent_type for p in parents):
+                        name = node.text.decode('utf-8', errors='ignore')
+                        stats["var_lengths"].append(len(name))
+
+            if node.type in control:
+                stats["control_blocks"] += 1
+ 
+            if node.type in function_ids:
+                stats["functions"] += 1
+                   
+            for child in node.children:
+                dfs(child, depth+1, cur_nesting)
+        
+        root = tree.root_node if hasattr(tree, "root_node") else tree
+        dfs(root, 1, 0)
+
+        if limit_reached: 
+            return {
+            "nodes": -1, "depth": -1, "nest_depth": -1, "avg_var_len": -1.0,
+            "control_blocks": -1, "control_density": -1.0, "functions": -1, "tokens": []
+            }
+
+        avg_var_len = sum(stats["var_lengths"]) / len(stats["var_lengths"]) if stats["var_lengths"] else 0
+        ctrl_dnsty = stats["control_blocks"] / LoC if LoC != 0 else 0
+        comment_density = stats["comments"] / LoC if LoC != 0 else 0
+
+        stats["avg_var_len"] = avg_var_len
+        stats["control_density"] = ctrl_dnsty
+        stats["comment_density"] = comment_density
+
+        return stats
+
+    def metrics(self, code, lang): 
+
+        analysis = lizard.analyze_file.analyze_source_code(f"snippet.{lang}", code)
+
+        avg_cyclomatic = analysis.average_cyclomatic_complexity
+        loc = analysis.nloc
+        num_tokens = analysis.token_count
+
+        return avg_cyclomatic, loc, num_tokens
+
+    def shannon_h(self, tokens):
+        if not tokens:
+            return 0.0
+
+        total = len(tokens)
+        token_counts = Counter(tokens)
+        entropy = 0.0
+
+        for x in token_counts.values():
+            
+            p = x / total
+            h = -(p * log2(p))
+            entropy += h
+
+        return entropy
+
+    def linter_score(self, codestr):
+        if not codestr.strip():
+            return 0.0
+
+        prev_out = sys.stdout
+        sys.stdout = StringIO()
+
+        lines = len(codestr.splitlines())
+        
+        if lines == 0:
+            return 0.0
+
+        try:
+            style_guide = linter.get_style_guide(quiet=1)
+            with patch("builtins.open", return_value=StringIO(codestr)):
+                report = style_guide.check_files(["dummy_file.ext"])
+            total_errors = report.total_errors
+        except Exception as e:
+            total_errors = 1
+        finally:
+            sys.stdout = prev_out
+
+        return float(total_errors / lines)
+    
+    def count_whitespace(self, codestr): 
+        if not codestr: 
+            return 0.0, 0.0, 0.0, 0.0
+        blanklines = []
+        lines = codestr.splitlines()
+        total_lines = len(lines)
+        if total_lines == 0:
+            return 0.0,0.0,0.0,0.0
+        linegaps = []
+        linechars = []
+        cur_gap = 0
+        for line in lines:
+            if not line.strip(): 
+                cur_gap += 1
+            else: 
+                blanklines.append(cur_gap)
+                blank = len(line) - len(line.lstrip())
+                linegaps.append(blank)
+                linechars.append(len(line.strip()))
+                cur_gap = 0
+        
+        if cur_gap > 0:
+            blanklines.append(cur_gap)
+
+        blankline_ratio = float(np.sum(blanklines) / total_lines)
+        blankline_mean = np.mean(blanklines)
+        blankline_std = np.std(blanklines)
+        char_sum = np.sum(linechars)
+        blankline_variation = float(blankline_std / blankline_mean + 1e-9) if blankline_mean > 0.0 else 0.0
+        blankspace_ratio = float(np.sum(linegaps) / char_sum) if char_sum > 0.0 else 0.0
+        blankspace_variance = float(np.var(linegaps))
+
+        return blankline_ratio, blankspace_variance, blankline_variation, blankspace_ratio
+
+
+    def save_dataframe(self, dataset, filename, llm=True):
+        folder = LLMCODE if llm else HCODE
+        Path(folder).mkdir(parents=True, exist_ok=True)
+        filename = filename+".csv" if not filename.endswith(".csv") else filename
+
+        df = pd.DataFrame(dataset)
+        path = Path(folder) / filename
+        master = Path(folder) / "master.csv"
+
+        header_bool = master.exists()
+
+        df.to_csv(path, index=False)
+        df.to_csv(master, mode='a', index=False, header=not header_bool)
+
+        return path
+    
+    def update_dataframe(self, df, llm=True):
+        codebases = {
+                lang: group.dropna().astype(str).tolist() 
+                for lang, group in df.groupby("lang")["src"]
+        }
+        dataframes = []
+        for lang, src in codebases.items():
+            cur_df = self.frame(src, lang, llm)
+            dataframes.append(cur_df)
+
+        final_df = pd.concat(dataframes, ignore_index=True)
+
+        return final_df
+    
+    def parse_codebase(self, df, groupID, columns, llm=True):
+        codebases = {
+                lang: group.dropna().asype(str).tolist()
+                for lang, group in df.groupby(groupID)[columns]
+        }
+
+        return codebases
+
+
