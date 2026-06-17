@@ -7,26 +7,41 @@ A tool to build and analyze topic matched corpora of LLM and Human **prose** and
 ### PROSE data 
 
 #### Key Metrics Included:
-topic_id,source,text,pos,lemmas,mean sentence length,std sentence length,lexical density,variance,burstiness,saliency,sentiment,sentiment deviation,ttr,depth,head,sub clauses,coord clauses,branching,balanced,label,timestamp
-
 
 * `text`: The raw text sample.
+
 * `pos`: Part-of-Speech tags.
+
 * `lemmas`: Lemmatized tokens.
+
 * `mean sentence length`: Avg tokens per sentence.
+
 * `std sentence length`: Standard Deviation of tokens per sentence.
-* `lexical density`: $\frac{\text{Content Words}}{\text{Total Words}}$.
+
+* `lexical density`: $$\frac{\text{Content Words}}{\text{Total Words}}$$
+
 * `variance`: Token frequency variance across document.
-* `burstiness`: $\frac{\text{Hapaxes}}{\text{Total tokens}}$.
-* `saliency`: $\frac{\sum \text{Frequencies}}{\text{Types}}$.
+
+* `burstiness`: $$\frac{\text{Hapaxes}}{\text{Total tokens}}$$
+
+* `saliency`: $$\frac{\sum \text{Frequencies}}{\text{Types}}$$
+
 * `sentiment`: Sentiment polarity score.
-* `sentiment deviation`: $|\text{Sentence sentiment} - \text{Document sentiment}|$.
+
+* `sentiment deviation`: $$|\text{Sentence sentiment} - \text{Document sentiment}|$$
+
 * `ttr`: Type-Token Ratio (lexical diversity).
+
 * `depth`: Max depth of syntax trees. 
-* `head`: $\frac{\sum_{\text{sentences}} \text{Head location}}{\text{Num sentences}}$ (Normalized).
+
+* `head`: $$\frac{\sum_{\text{sentences}} \text{Head location}}{\text{Num sentences}}$$ (Normalized).
+
 * `sub clauses`: Avg number of suboordinate clauses per sentence.
+
 * `coord clauses`: Avg number of coordinating conjunctions per sentence.
+
 * `branching` : Left/right bias of branching in syntax trees across document.
+
 * `balanced`: Boolean, Left branch nodes == Right branch nodes. (+/- 2 nodes).
 
 #### Dataset Sample
@@ -37,8 +52,8 @@ topic_id,source,text,pos,lemmas,mean sentence length,std sentence length,lexical
 
 |   topic_id | source   | text                                                  | pos                     | lemmas                  |   mean sentence length |   std sentence length |   lexical density |    variance |   burstiness |   saliency |   sentiment |   sentiment deviation |      ttr |   depth |      head |   sub clauses |   coord clauses |   branching |   balanced | label   | timestamp     |
 |-----------:|:---------|:------------------------------------------------------|:------------------------|:------------------------|-----------------------:|----------------------:|------------------:|------------:|-------------:|-----------:|------------:|----------------------:|---------:|--------:|----------:|--------------:|----------------:|------------:|-----------:|:--------|:------------------|
-|          0 | Human    | Sentiment. Tension management and communication of... | ['NN', '.', 'NNP', '... | ['Sentiment', '.', '... |                22.3137 |              15.4457  |          0.516257 | 5.60993e-06 |      1.67315 | 0.00141561 |      0.9969 |              0.312041 | 0.297452 |      15 | 0.0228189 |      0.509804 |        0.823529 |  0.135929   |   0.5      | HUMAN   | 2026-06-01_085540 |
-|          0 | LLM      | The Architecture of Belonging: Tradition, Boundary... | ['DT', 'NNP', 'IN', ... | ['The', 'Architectur... |                22.4915 |               9.84864 |          0.522984 | 4.75066e-06 |      1.17536 | 0.00185441 |      0.9962 |              0.325832 | 0.394876 |      13 | 0.0188296 |      0.847458 |        0.694915 | -0.00201933 |   0.372881 | LLM     | 2026-06-01_110934 |
+|          0 | **Human**    | Sentiment. Tension management and communication of... | ['NN', '.', 'NNP', '... | ['Sentiment', '.', '... |                22.3137 |              15.4457  |          0.516257 | 5.60993e-06 |      1.67315 | 0.00141561 |      0.9969 |              0.312041 | 0.297452 |      15 | 0.0228189 |      0.509804 |        0.823529 |  0.135929   |   0.5      | HUMAN   | 2026-06-01_085540 |
+|          0 | **LLM**      | The Architecture of Belonging: Tradition, Boundary... | ['DT', 'NNP', 'IN', ... | ['The', 'Architectur... |                22.4915 |               9.84864 |          0.522984 | 4.75066e-06 |      1.17536 | 0.00185441 |      0.9962 |              0.325832 | 0.394876 |      13 | 0.0188296 |      0.847458 |        0.694915 | -0.00201933 |   0.372881 | LLM     | 2026-06-01_110934 |
 
 </details>
 
@@ -47,8 +62,8 @@ topic_id,source,text,pos,lemmas,mean sentence length,std sentence length,lexical
 
 |   topic_id | source   | text                                                  | pos                     | lemmas                  |   mean sentence length |   std sentence length |   lexical density |    variance |   burstiness |   saliency |   sentiment |   sentiment deviation |      ttr |   depth |      head |   sub clauses |   coord clauses |   branching |   balanced | label   | timestamp         |
 |-----------:|:---------|:------------------------------------------------------|:------------------------|:------------------------|-----------------------:|----------------------:|------------------:|------------:|-------------:|-----------:|------------:|----------------------:|---------:|--------:|----------:|--------------:|----------------:|------------:|-----------:|:--------|:------------------|
-|          1 | Human    | When Fred wheeled him back into his room, the big ... | ['WRB', 'NNP', 'VBD'... | ['When', 'Fred', 'wh... |                23.0693 |               13.8301 |          0.497854 | 2.15642e-06 |      1.30916 | 0.0011217  |      0.9983 |              0.40705  | 0.309871 |      12 | 0.0250197 |       1.26733 |        0.90099  |  0.00801188 |   0.356436 | HUMAN   | 2026-06-01_085541 |
-|          1 | LLM      | The following narrative expands upon the fragmente... | ['DT', 'JJ', 'JJ', '... | ['The', 'following',... |                22.3506 |               12.2382 |          0.470947 | 2.6522e-06  |      1.58826 | 0.00102537 |      0.9988 |              0.355442 | 0.26932  |      14 | 0.0238958 |       1.05844 |        0.668831 |  0.0117418  |   0.480519 | LLM     | 2026-06-01_110935 |
+|          1 | **Human**    | When Fred wheeled him back into his room, the big ... | ['WRB', 'NNP', 'VBD'... | ['When', 'Fred', 'wh... |                23.0693 |               13.8301 |          0.497854 | 2.15642e-06 |      1.30916 | 0.0011217  |      0.9983 |              0.40705  | 0.309871 |      12 | 0.0250197 |       1.26733 |        0.90099  |  0.00801188 |   0.356436 | HUMAN   | 2026-06-01_085541 |
+|          1 | **LLM**      | The following narrative expands upon the fragmente... | ['DT', 'JJ', 'JJ', '... | ['The', 'following',... |                22.3506 |               12.2382 |          0.470947 | 2.6522e-06  |      1.58826 | 0.00102537 |      0.9988 |              0.355442 | 0.26932  |      14 | 0.0238958 |       1.05844 |        0.668831 |  0.0117418  |   0.480519 | LLM     | 2026-06-01_110935 |
 
 </details>
 
@@ -57,8 +72,8 @@ topic_id,source,text,pos,lemmas,mean sentence length,std sentence length,lexical
 
 |   topic_id | source   | text                                                  | pos                     | lemmas                  |   mean sentence length |   std sentence length |   lexical density |    variance |   burstiness |   saliency |   sentiment |   sentiment deviation |      ttr |   depth |      head |   sub clauses |   coord clauses |   branching |   balanced | label   | timestamp         |
 |-----------:|:---------|:------------------------------------------------------|:------------------------|:------------------------|-----------------------:|----------------------:|------------------:|------------:|-------------:|-----------:|------------:|----------------------:|---------:|--------:|----------:|--------------:|----------------:|------------:|-----------:|:--------|:------------------|
-|          2 | Human    | In good time I shall get to the distressing actual... | ['IN', 'JJ', 'NN', '... | ['In', 'good', 'time... |                17.7388 |               11.5848 |          0.459823 | 1.75091e-06 |      1.21884 | 0.00108564 |     -0.9852 |              0.343956 | 0.327303 |      10 | 0.0336383 |      0.880597 |        0.574627 |  0.00659567 |   0.544776 | HUMAN   | 2026-06-01_085541 |
-|          2 | LLM      | To understand the character of Salu Norberg—not me... | ['TO', 'VB', 'DT', '... | ['To', 'understand',... |                19.1538 |               11.8544 |          0.452668 | 5.81684e-06 |      1.43173 | 0.00168455 |      0.9987 |              0.214917 | 0.321285 |      12 | 0.0237924 |      1        |        0.450549 | -0.0179107  |   0.538462 | LLM     | 2026-06-01_110936 |
+|          2 | **Human**    | In good time I shall get to the distressing actual... | ['IN', 'JJ', 'NN', '... | ['In', 'good', 'time... |                17.7388 |               11.5848 |          0.459823 | 1.75091e-06 |      1.21884 | 0.00108564 |     -0.9852 |              0.343956 | 0.327303 |      10 | 0.0336383 |      0.880597 |        0.574627 |  0.00659567 |   0.544776 | HUMAN   | 2026-06-01_085541 |
+|          2 | **LLM**      | To understand the character of Salu Norberg—not me... | ['TO', 'VB', 'DT', '... | ['To', 'understand',... |                19.1538 |               11.8544 |          0.452668 | 5.81684e-06 |      1.43173 | 0.00168455 |      0.9987 |              0.214917 | 0.321285 |      12 | 0.0237924 |      1        |        0.450549 | -0.0179107  |   0.538462 | LLM     | 2026-06-01_110936 |
 
 </details>
 
