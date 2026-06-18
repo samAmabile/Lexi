@@ -72,8 +72,8 @@ $$\frac{\sum_{s} HEAD.LOC}{\lVert S \rVert}$$
 
 |topic_id|source|text|pos|lemmas|mean sentence length|std sent len|lex-density|var|burstiness|saliency|sentiment|sent sd|ttr|depth|head|subord|coord|branch|blnc|label|tmstmp |
 |---:|:---|:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|:---|
-| 0 | **Human** | Sentiment. Tension management and communication of... | ['NN', '.', 'NNP', '... | ['Sentiment', '.', '... | 22.3137 | 15.4457 | 0.516257 | 5.60993e-06 | 1.67315 | 0.00141561 | 0.9969 | 0.312041 | 0.297452 | 15 | 0.0228189 | 0.509804 | 0.823529 | 0.135929 | 0.5 | HUMAN | 2026-06-01_085540 |
-| 0 | **LLM** | The Architecture of Belonging: Tradition, Boundary... | ['DT', 'NNP', 'IN', ... | ['The', 'Architectur... | 22.4915 | 9.84864 | 0.522984 | 4.75066e-06 | 1.17536 | 0.00185441 | 0.9962 | 0.325832 | 0.394876 | 13 | 0.0188296 | 0.847458 | 0.694915 | -0.00201933 | 0.372881 | LLM | 2026-06-01_110934 |
+|0| **Human** | Sentiment. Tension management and communication of... | ['NN', '.', 'NNP', '... | ['Sentiment', '.', '... | 22.3137 | 15.4457 | 0.516257 | 5.60993e-06 | 1.67315 | 0.00141|0.996|0.31|0.297|15|0.022|0.509| 0.823|0.135|0.5|HUMAN|2026-06-01_085540|
+|0| **LLM** | The Architecture of Belonging: Tradition, Boundary... | ['DT', 'NNP', 'IN', ... | ['The', 'Architectur... | 22.4915 | 9.84864 | 0.522984 | 4.75066e-06 | 1.17536 | 0.0018|0.99|0.325|0.39|13|0.018|0.84|0.694|-0.002|0.37|LLM|2026-06-01_110934|
 
 </details>
 
@@ -82,8 +82,8 @@ $$\frac{\sum_{s} HEAD.LOC}{\lVert S \rVert}$$
 
 |topic_id|source|text|pos|lemmas|mean sentence length|std sent len|lex-density|var|burstiness|saliency|sentiment|sent sd|ttr|depth|head|subord|coord|branch|blnc|label|tmstmp |
 |---:|:---|:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|:---|
-| 1 | **Human** | When Fred wheeled him back into his room, the big ... | ['WRB', 'NNP', 'VBD'... | ['When', 'Fred', 'wh... | 23.0693 | 13.8301 | 0.497854 | 2.15642e-06 | 1.30916 | 0.0011217 | 0.9983 | 0.40705 | 0.309871 | 12 | 0.0250197 | 1.26733 | 0.90099 | 0.00801188 | 0.356436 | HUMAN | 2026-06-01_085541 |
-| 1 | **LLM** | The following narrative expands upon the fragmente... | ['DT', 'JJ', 'JJ', '... | ['The', 'following',... | 22.3506 | 12.2382 | 0.470947 | 2.6522e-06 | 1.58826 | 0.00102537 | 0.9988 | 0.355442 | 0.26932 | 14 | 0.0238958 | 1.05844 | 0.668831 | 0.0117418 | 0.480519 | LLM | 2026-06-01_110935 |
+|1| **Human** | When Fred wheeled him back into his room, the big ... | ['WRB', 'NNP', 'VBD'... | ['When', 'Fred', 'wh... | 23.0693 | 13.8301 | 0.497854 | 2.15642e-06 | 1.30916 | 0.001|0.99|0.407|0.309|12|0.025|1.267|0.9|0.008|0.3|HUMAN|2026-06-01_085541|
+|1|**LLM**|The following narrative expands upon the fragmente... |['DT', 'JJ', 'JJ', '... |['The', 'following',... |22.35|12.23|0.47|2.6e-06|1.58|0.001|0.99|0.35|0.26|14|0.023|1.05|0.66|0.011|0.48|LLM|2026-06-01_110935|
 
 </details>
 
@@ -92,8 +92,8 @@ $$\frac{\sum_{s} HEAD.LOC}{\lVert S \rVert}$$
 
 |topic_id|source|text|pos|lemmas|mean sentence length|std sent len|lex-density|var|burstiness|saliency|sentiment|sent sd|ttr|depth|head|subord|coord|branch|blnc|label|tmstmp |
 |---:|:---|:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|:---|
-| 2 | **Human** | In good time I shall get to the distressing actual... | ['IN', 'JJ', 'NN', '... | ['In', 'good', 'time... | 17.7388 | 11.5848 | 0.459823 | 1.75091e-06 | 1.21884 | 0.00108564 | -0.9852 | 0.343956 | 0.327303 | 10 | 0.0336383 | 0.880597 | 0.574627 | 0.00659567 | 0.544776 | HUMAN | 2026-06-01_085541 |
-| 2 | **LLM** | To understand the character of Salu Norberg—not me... | ['TO', 'VB', 'DT', '... | ['To', 'understand',... | 19.1538 | 11.8544 | 0.452668 | 5.81684e-06 | 1.43173 | 0.00168455 | 0.9987 | 0.214917 | 0.321285 | 12 | 0.0237924 | 1 | 0.450549 | -0.0179107 | 0.538462 | LLM | 2026-06-01_110936 |
+|2|**Human**|In good time I shall get to the distressing actual... |['IN', 'JJ', 'NN', '... |['In', 'good', 'time...|17.7388|11.5848|0.459823|1.71e-06|1.21|0.001|-0.9|0.34|0.32|10|0.03|0.88|0.57|0.006|0.54|HUMAN|2026-06-01_085541|
+|2|**LLM**|To understand the character of Salu Norberg—not me...|['TO', 'VB', 'DT', '...|['To', 'understand',...|19.15|11.85|0.45|5.8e-06|1.43|0.001|0.9|0.21|0.32|12|0.023|1|0.45|-0.017|0.53|LLM|2026-06-01_110936|
 
 </details>
 
