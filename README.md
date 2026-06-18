@@ -20,23 +20,23 @@ A tool to build and analyze topic matched corpora of LLM and Human **prose** and
 
 * `lexical density`: Ratio of content words to total words. 
 
-$$\frac{\text{Content Words}}{\text{Total Words}}$$
+$$\textbf{Lexical Density }=\frac{\text{Content Words}}{\text{Total Words}}$$
 
 * `variance`: Token frequency variance across document.
 
 * `burstiness`: Ratio of hapaxes to total tokens.
 
-$$\frac{\text{Hapaxes}}{\text{Total tokens}}$$
+$$\textbf{Burstiness } = \frac{\text{Hapaxes}}{\text{Total tokens}}$$
 
 * `saliency`: Sum of token frequencies divided by number of unique tokens (types).
 
-$$\frac{\sum \text{Frequencies}}{\text{|Types|}}$$
+$$\textbf{Saliency }=\frac{\sum \text{Frequencies}}{\text{|Types|}}$$
 
 * `sentiment`: Sentiment polarity score.
 
 * `sentiment deviation`: Absolute value of sentence sentiment minus document sentiment, divided by number of sentences. 
 
-$$\frac{|\text{Sentence sentiment} - \text{Document sentiment}|}{\text{|sentences|}}$$
+$$\textbf{Sentiment Deviation} = \frac{|\text{Sentence sentiment} - \text{Document sentiment}|}{\text{|sentences|}}$$
 
 * `ttr`: Type-Token Ratio (lexical diversity).
 
@@ -44,7 +44,7 @@ $$\frac{|\text{Sentence sentiment} - \text{Document sentiment}|}{\text{|sentence
 
 * `head`: Sum over sentences of head locations, divided by number of sentences.
 
-$$\frac{\sum_{\text{sentences}} \text{Head location}}{\text{|sentences|}}$$ (Normalized).
+$$\textbf{Sentence Head Location }=\frac{\sum_{\text{sentences}} \text{Head location}}{\text{|sentences|}}$$ 
 
 * `sub clauses`: Avg number of suboordinate clauses per sentence.
 
