@@ -36,7 +36,7 @@ $$\frac{\sum \text{Frequencies}}{\text{|Types|}}$$
 
 * `sentiment deviation`: Absolute value of sentence sentiment minus document sentiment, divided by number of sentences. 
 
-$$\frac{|\text{Sentence sentiment} - \text{Document sentiment}|}{\text{|sentences|}$$
+$$\frac{|\text{Sentence sentiment} - \text{Document sentiment}|}{\text{|sentences|}}$$
 
 * `ttr`: Type-Token Ratio (lexical diversity).
 
