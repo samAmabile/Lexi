@@ -198,7 +198,7 @@ case 5:
 }while(ch!=6);
 
 }
-"|Write a complete C++ program that defines a class named Poly to perform operations on polynomials. The Poly class must include member functions to accept coefficients and degrees for two polynomials from the user, display the entered polynomials, add the two polynomials, multiply the two polynomials, and evaluate a polynomial for a given value of x. Implement operator overloading for the output stream (<<) to display the result of polynomial addition. The program should present a menu to the user offering options to enter polynomials, display them, perform addition, perform multiplication, or evaluate a polynomial, and continue until the user chooses to exit.|"#include <iostream>
+|Write a complete C++ program that defines a class named Poly to perform operations on polynomials. The Poly class must include member functions to accept coefficients and degrees for two polynomials from the user, display the entered polynomials, add the two polynomials, multiply the two polynomials, and evaluate a polynomial for a given value of x. Implement operator overloading for the output stream (<<) to display the result of polynomial addition. The program should present a menu to the user offering options to enter polynomials, display them, perform addition, perform multiplication, or evaluate a polynomial, and continue until the user chooses to exit.|#include <iostream>
 #include <vector>
 #include <map>
 #include <cmath>   // For std::pow
@@ -224,7 +224,7 @@ public:
             std::cout << ""Invalid input. Please enter a non-negative integer: "";
             std::cin.clear();
             std::cin.ignore("
-java|"import java.util.*;
+java|import java.util.*;
 public class Spiral {
 
 	public static void main(String[] args) {
@@ -279,7 +279,7 @@ public class Spiral {
 	}
 
 }
-"|Write a complete, standalone Java program that reads two integers, m and n, representing the number of rows and columns of a matrix, respectively. Subsequently, read m*n integer elements to populate the matrix. After reading all inputs, print the elements of the matrix in a spiral order, starting from the top-left corner and moving clockwise. Each element should be followed by a space. Ensure the program correctly handles matrices of various dimensions.|"```java
+|Write a complete, standalone Java program that reads two integers, m and n, representing the number of rows and columns of a matrix, respectively. Subsequently, read m*n integer elements to populate the matrix. After reading all inputs, print the elements of the matrix in a spiral order, starting from the top-left corner and moving clockwise. Each element should be followed by a space. Ensure the program correctly handles matrices of various dimensions.|```java
 import java.util.Scanner;
 
 /**
@@ -321,7 +321,7 @@ public class SpiralMatrix {
             System.err.println(""Invalid input. Please enter integers for dimensions and matrix elements."");
         } catch (Exception e) {
             System.err.println(""An unexpected error occurred: """
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 int binarySearch(int arr[], int n, int key){
     int s=0;
@@ -356,14 +356,14 @@ cout<<binarySearch(arr,n,key);
 
     return 0;
  
-}"|Write a complete C++ program that performs a binary search. The program should first read an integer N representing the size of an array. Then, it should read N integer elements into the array. After that, it should read a single integer representing the key to search for. The program must implement a binary search function that takes the array, its size, and the key as input. This function should return the index of the key if found, or -1 if the key is not present in the array. Finally, the main function should call the binary search function and print its returned value to standard output.|"#include <iostream> // Required for standard input/output operations (std::cin, std::cout, std::endl)
+}|Write a complete C++ program that performs a binary search. The program should first read an integer N representing the size of an array. Then, it should read N integer elements into the array. After that, it should read a single integer representing the key to search for. The program must implement a binary search function that takes the array, its size, and the key as input. This function should return the index of the key if found, or -1 if the key is not present in the array. Finally, the main function should call the binary search function and print its returned value to standard output.|#include <iostream> // Required for standard input/output operations (std::cin, std::cout, std::endl)
 #include <vector>   // Required for using std::vector, a dynamic array
 
 /**
  * @brief Performs a binary search on a sorted array to find a specified key.
  *
  * This function assumes the input array 'arr' is sorted in ascending order"
-cpp|"#include <iostream>
+cpp|#include <iostream>
 
 using namespace std;
 
@@ -377,7 +377,7 @@ int main() {
 	cout<<d<<endl;
 	cout<<e<<endl;
 	return 0;
-}"|Write a complete C++ program that initializes two integer variables, for example with values 2 and 3. Perform a bitwise AND operation on these two integers, then a bitwise OR operation, and finally a bitwise XOR operation. Print the result of each bitwise operation to the console on a separate line.|"#include <iostream> // Required for input/output operations
+}|Write a complete C++ program that initializes two integer variables, for example with values 2 and 3. Perform a bitwise AND operation on these two integers, then a bitwise OR operation, and finally a bitwise XOR operation. Print the result of each bitwise operation to the console on a separate line.|#include <iostream> // Required for input/output operations
 
 int main() {
     // Initialize two integer variables
@@ -401,7 +401,7 @@ int main() {
 
     return 0; // Indicate successful program execution
 }"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 struct node {
     int data;
@@ -512,7 +512,7 @@ void postorder(struct node *temp)
     if(temp->right!=NULL)
     postorder(temp->right);
     cout<<temp->data<<"" "";
-}"|Write a complete C++ program that implements a binary search tree. Define a struct for tree nodes containing an integer data value and pointers to left and right children. Implement an insert function that adds new integer data to the binary search tree, maintaining the BST properties. Implement three recursive traversal functions: preorder, inorder, and postorder, each printing the node data during traversal. The main function should first prompt the user to enter the number of initial elements for the tree, then accept those elements and insert them. Subsequently, it should present a menu-driven interface with options to insert a new element, display the tree using all three traversals (preorder, postorder, and inorder), or exit the program. The program should continue to display the menu until the user chooses to exit. Ensure all dynamically allocated memory for the tree nodes is properly freed upon program termination.|"#include <iostream> // Required for input/output operations
+}|Write a complete C++ program that implements a binary search tree. Define a struct for tree nodes containing an integer data value and pointers to left and right children. Implement an insert function that adds new integer data to the binary search tree, maintaining the BST properties. Implement three recursive traversal functions: preorder, inorder, and postorder, each printing the node data during traversal. The main function should first prompt the user to enter the number of initial elements for the tree, then accept those elements and insert them. Subsequently, it should present a menu-driven interface with options to insert a new element, display the tree using all three traversals (preorder, postorder, and inorder), or exit the program. The program should continue to display the menu until the user chooses to exit. Ensure all dynamically allocated memory for the tree nodes is properly freed upon program termination.|#include <iostream> // Required for input/output operations
 #include <limits>   // Required for std::numeric_limits
 
 // Define the structure for a tree node
@@ -522,7 +522,7 @@ struct Node {
     Node* right; // Pointer to the right child
 
     //"
-py|"# Author:       MyName
+py|# Author:       MyName
 # Description:  This program converts a temperature in Celsius into a temperature in Fahrenheit
 
 while True:
@@ -540,7 +540,7 @@ while True:
     fahrenheit_temp = float(celsius_temp) * 1.8 + 32
 
     print '\n---The Fahrenheit equivalent of', celsius_temp, 'is:', fahrenheit_temp
-"|Write a complete Python program that continuously prompts the user to enter a temperature in Celsius. The program should convert the entered Celsius temperature to Fahrenheit using the formula F = C * 1.8 + 32. Implement input validation to ensure that the user's input for the temperature is a valid number; if not, re-prompt the user without performing the conversion. Allow the user to type 'done' at any prompt to exit the program gracefully. After each successful conversion, display both the original Celsius temperature and its Fahrenheit equivalent.|"import sys
+|Write a complete Python program that continuously prompts the user to enter a temperature in Celsius. The program should convert the entered Celsius temperature to Fahrenheit using the formula F = C * 1.8 + 32. Implement input validation to ensure that the user's input for the temperature is a valid number; if not, re-prompt the user without performing the conversion. Allow the user to type 'done' at any prompt to exit the program gracefully. After each successful conversion, display both the original Celsius temperature and its Fahrenheit equivalent.|import sys
 
 def celsius_to_fahrenheit(celsius):
     """"""Converts a temperature from Celsius to Fahrenheit.""""""
@@ -583,7 +583,7 @@ def main():
 
 if __name__ == ""__main__"":
     main()"
-java|"import java.util.*;
+java|import java.util.*;
 import java.io.*;
 class MaxMin
 {
@@ -597,7 +597,7 @@ System.out.println(""Min : "" + arr[0]);
 
 
 }
-}"|Write a complete, standalone Java program that initializes an integer array with predefined values, then calculates and prints both the maximum and minimum elements found within that array to the console.|"import java.util.Arrays; // Not strictly needed for this solution, but good for general array utilities.
+}|Write a complete, standalone Java program that initializes an integer array with predefined values, then calculates and prints both the maximum and minimum elements found within that array to the console.|import java.util.Arrays; // Not strictly needed for this solution, but good for general array utilities.
 
 public class MinMaxArray {
 
@@ -635,7 +635,7 @@ public class MinMaxArray {
         System.out.println(""Minimum element: "" + min);
     }
 }"
-java|"import java.util.*;
+java|import java.util.*;
 public class addDigits {
     public static void main(String[] args)
     {
@@ -654,7 +654,7 @@ public class addDigits {
         System.out.println(sum);
     }
 }
-"|Write a complete standalone Java program. The program must define an integer variable, for example, initialized with the value 38. It must then calculate the sum of its digits repeatedly until the sum becomes a single-digit number. Finally, the program should print this single-digit result to the console.|"public class DigitalRootCalculator {
+|Write a complete standalone Java program. The program must define an integer variable, for example, initialized with the value 38. It must then calculate the sum of its digits repeatedly until the sum becomes a single-digit number. Finally, the program should print this single-digit result to the console.|public class DigitalRootCalculator {
 
     public static void main(String[] args) {
         // Define an integer variable, initialized with the value 38
@@ -679,7 +679,7 @@ public class addDigits {
         System.out.println(number);
     }
 }"
-java|"package binarysearch;
+java|package binarysearch;
 import java.util.*;
 
 public class BinarySearch {
@@ -756,7 +756,7 @@ public class BinarySearch {
       return 0;
     }
 
-}"|"Write a complete, standalone Java program. The program should first prompt the user to enter the desired size for an integer array. It should then generate an array of that size, populated with random integers between 0 and 999 (inclusive). Implement a bubble sort algorithm to sort this array in ascending order and print the sorted array to the console. Afterward, prompt the user to enter a number they wish to find within the array. Implement a binary search algorithm to locate this number in the sorted array. Finally, display a message indicating whether the number was found, and if so, at what index in the array. If the number is not found, display a corresponding ""not found"" message. All necessary input and output operations should be handled via the console."|"import java.util.Arrays;
+}|Write a complete, standalone Java program. The program should first prompt the user to enter the desired size for an integer array. It should then generate an array of that size, populated with random integers between 0 and 999 (inclusive). Implement a bubble sort algorithm to sort this array in ascending order and print the sorted array to the console. Afterward, prompt the user to enter a number they wish to find within the array. Implement a binary search algorithm to locate this number in the sorted array. Finally, display a message indicating whether the number was found, and if so, at what index in the array. If the number is not found, display a corresponding ""not found"" message. All necessary input and output operations should be handled via the console.|import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -861,7 +861,7 @@ public class ArrayOperations {
         // Display the search result
         if (foundIndex != -1) {
             System.out.println(""Number "" + searchNumber + "" found at index: "" + foundIndex + """
-cpp|"#include<bits/stdc++.h>
+cpp|#include<bits/stdc++.h>
 using namespace std;
 int main()
 {
@@ -898,7 +898,7 @@ int main()
 
     }
     return 0;
-}"|Write a complete C++ program that reads an integer N, then reads N*N integers to populate an N x N matrix. The program must then transpose this matrix in-place and print the resulting transposed matrix to standard output. Each row of the transposed matrix should be printed on a new line, with the elements of each row printed consecutively without any separators.|"#include <iostream> // Required for input/output operations (std::cin, std::cout)
+}|Write a complete C++ program that reads an integer N, then reads N*N integers to populate an N x N matrix. The program must then transpose this matrix in-place and print the resulting transposed matrix to standard output. Each row of the transposed matrix should be printed on a new line, with the elements of each row printed consecutively without any separators.|#include <iostream> // Required for input/output operations (std::cin, std::cout)
 #include <vector>   // Required for using std::vector to store the matrix
 #include <algorithm> // Required for std::swap
 
@@ -932,7 +932,7 @@ int main() {
 
     // Transpose the matrix in-place.
     // This is achieved by iterating through the upper triangle of the matrix"
-cpp|"#include<cstdio>
+cpp|#include<cstdio>
 #include<algorithm>
 #pragma warning(disable:4996)
 using namespace std;
@@ -997,7 +997,7 @@ int main()
 		}
 	}
 	return 0;
-}"|Write a complete standalone C++ program that reads an integer N, then reads 2*N - 1 integers. The program must find and print the single integer among the 2*N - 1 inputs that appears an odd number of times. All other integers in the input sequence will appear an even number of times. The output should be only this unique integer.|"#include <iostream> // Required for input/output operations
+}|Write a complete standalone C++ program that reads an integer N, then reads 2*N - 1 integers. The program must find and print the single integer among the 2*N - 1 inputs that appears an odd number of times. All other integers in the input sequence will appear an even number of times. The output should be only this unique integer.|#include <iostream> // Required for input/output operations
 
 int main() {
     // Optimize C++ standard streams for faster input/output.
@@ -1038,7 +1038,7 @@ int main() {
 
     return 0; // Indicate successful program execution.
 }"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 #include<algorithm>
 using namespace std;
 
@@ -1069,7 +1069,7 @@ int main() {
     }
 
     return 0;
-}"|Write a complete C++ program that defines a structure named 'edge' with integer members for 'src', 'dst', and 'w' representing source, destination, and weight respectively. The program should prompt the user to input values for three such edges. After reading the input, it must sort these three edges in ascending order based on their 'w' (weight) member. Finally, the program should print the 'src', 'dst', and 'w' of each sorted edge to standard output, with each edge's data on a new line and values separated by spaces.|"#include <iostream> // Required for input/output operations (std::cout, std::cin, std::endl, std::cerr)
+}|Write a complete C++ program that defines a structure named 'edge' with integer members for 'src', 'dst', and 'w' representing source, destination, and weight respectively. The program should prompt the user to input values for three such edges. After reading the input, it must sort these three edges in ascending order based on their 'w' (weight) member. Finally, the program should print the 'src', 'dst', and 'w' of each sorted edge to standard output, with each edge's data on a new line and values separated by spaces.|#include <iostream> // Required for input/output operations (std::cout, std::cin, std::endl, std::cerr)
 #include <vector>   // Required for std::vector to store edges
 #include <algorithm> // Required for std::sort to sort the edges
 
@@ -1116,7 +1116,7 @@ int main() {
 
     return 0; // Indicate successful program execution
 }"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 #include<cmath>
 using namespace std;
 
@@ -1154,12 +1154,12 @@ int main()
     cout<<""Reqd: ""<<mincount(a,n)<<endl;
     
 }
-"|Write a complete C++ program that calculates the minimum number of perfect squares that sum up to a given positive integer `n`. The program should prompt the user to enter the integer `n`. Implement a dynamic programming approach using memoization to efficiently solve this problem. The output should display the calculated minimum count of perfect squares.|"```cpp
+|Write a complete C++ program that calculates the minimum number of perfect squares that sum up to a given positive integer `n`. The program should prompt the user to enter the integer `n`. Implement a dynamic programming approach using memoization to efficiently solve this problem. The output should display the calculated minimum count of perfect squares.|```cpp
 #include <iostream> // Required for input/output operations (std::cin, std::cout, std::cerr)
 #include <vector>   // Required for std::vector, used for the dynamic programming table
 #include <algorithm> // Required for std::min, used to find the minimum of two values
 #include <cmath>    // Required for std::"
-py|"import sklearn as sk
+py|import sklearn as sk
 import pandas as pd
 import numpy as np
 import os
@@ -1186,7 +1186,7 @@ for ingredient in unique_ingredients:
 
 final_df.columns = [column_name.encode('utf-8','ignore') for column_name in final_df.columns]
 final_df.to_csv('processed_cuisine_data_2.csv',index=False)
-"|Write a complete Python program that downloads JSON data from the URL 'http://www.souravsengupta.com/cds2017/evaluation/cuisine.json'. Parse the downloaded JSON into a pandas DataFrame. From this DataFrame, extract all unique ingredients across all dishes, normalizing them to lowercase. Create a new pandas DataFrame that includes a 'dish_id' column. For each unique ingredient identified, add a new column to this DataFrame. Populate these new ingredient columns with binary values: 1 if the ingredient is present in the corresponding dish, and 0 otherwise. Finally, save the resulting DataFrame to a CSV file named 'processed_cuisine_data.csv' without including the DataFrame index.|"import requests
+|Write a complete Python program that downloads JSON data from the URL 'http://www.souravsengupta.com/cds2017/evaluation/cuisine.json'. Parse the downloaded JSON into a pandas DataFrame. From this DataFrame, extract all unique ingredients across all dishes, normalizing them to lowercase. Create a new pandas DataFrame that includes a 'dish_id' column. For each unique ingredient identified, add a new column to this DataFrame. Populate these new ingredient columns with binary values: 1 if the ingredient is present in the corresponding dish, and 0 otherwise. Finally, save the resulting DataFrame to a CSV file named 'processed_cuisine_data.csv' without including the DataFrame index.|import requests
 import pandas as pd
 import sys
 
@@ -1198,7 +1198,7 @@ def process_cuisine_data(url, output_filename='processed_cuisine_data.csv'):
 
     Args:
         url ("
-java|"public class Kalpana {
+java|public class Kalpana {
     public static void main(String args[])
 	{
         int n=23;
@@ -1216,7 +1216,7 @@ java|"public class Kalpana {
     }
     
 }
-"|Write a complete, standalone Java program that defines a class named Kalpana. This class must contain a main method and a static method named isodd that accepts an integer as input. The isodd method must determine if the input integer is odd by using a bitwise AND operation with 1. It should return true if the number is odd and false otherwise. The main method must initialize an integer variable with a value, call the isodd method with this variable, and print a descriptive message indicating whether the number is odd based on the returned boolean value.|"// Kalpana.java
+|Write a complete, standalone Java program that defines a class named Kalpana. This class must contain a main method and a static method named isodd that accepts an integer as input. The isodd method must determine if the input integer is odd by using a bitwise AND operation with 1. It should return true if the number is odd and false otherwise. The main method must initialize an integer variable with a value, call the isodd method with this variable, and print a descriptive message indicating whether the number is odd based on the returned boolean value.|// Kalpana.java
 public class Kalpana {
 
     /**
@@ -1282,7 +1282,7 @@ public class Kalpana {
         }
     }
 }"
-py|"# -*- coding: utf-8 -*-
+py|# -*- coding: utf-8 -*-
 """"""
 Created on Tue Sep 18 19:34:23 2018
 
@@ -1303,7 +1303,7 @@ for words in File_Handle:
             LCount += 1
         else:
             print ""Error""
-            break"|"Write a complete Python program that reads a text file named 'names.txt'. The program must count the total occurrences of the specific names ""Lea"", ""Darth"", and ""Luke"" as whole, case-sensitive words within the file. After processing the entire file, print the final count for ""Lea"", the final count for ""Darth"", and the final count for ""Luke"". Implement error handling to gracefully manage the scenario where 'names.txt' does not exist, printing an appropriate error message to the user in that case."|"import re
+            break|Write a complete Python program that reads a text file named 'names.txt'. The program must count the total occurrences of the specific names ""Lea"", ""Darth"", and ""Luke"" as whole, case-sensitive words within the file. After processing the entire file, print the final count for ""Lea"", the final count for ""Darth"", and the final count for ""Luke"". Implement error handling to gracefully manage the scenario where 'names.txt' does not exist, printing an appropriate error message to the user in that case.|import re
 
 # Define the filename to be processed
 FILE_NAME = 'names.txt'
@@ -1325,7 +1325,7 @@ try:
 
         # Use regular expressions to find all whole words in the content.
         # '\b' is a word boundary"
-py|"import csv
+py|import csv
 import numpy as np
 
 
@@ -1339,7 +1339,7 @@ def read_from_csv(csv_file_path):
     return_array = np.asarray(return_array)
     x, y = return_array[:, :-1], return_array[:, -1:]
     return np.asarray(x).astype(np.int), y.squeeze()
-"|Write a complete standalone Python program that defines a function named 'read_from_csv'. This function should accept one argument, 'csv_file_path', a string representing the path to a CSV file. Inside the function, read the data from the specified CSV file row by row. Convert the entire dataset into a NumPy array. Separate this array into two components: 'x' which contains all columns except the last one, and 'y' which contains only the last column. Ensure that the 'x' component is cast to a NumPy array of integers. The 'y' component should be squeezed to remove single-dimensional entries. The function must return the processed 'x' and 'y' NumPy arrays.|"import csv
+|Write a complete standalone Python program that defines a function named 'read_from_csv'. This function should accept one argument, 'csv_file_path', a string representing the path to a CSV file. Inside the function, read the data from the specified CSV file row by row. Convert the entire dataset into a NumPy array. Separate this array into two components: 'x' which contains all columns except the last one, and 'y' which contains only the last column. Ensure that the 'x' component is cast to a NumPy array of integers. The 'y' component should be squeezed to remove single-dimensional entries. The function must return the processed 'x' and 'y' NumPy arrays.|import csv
 import numpy as np
 import os
 
@@ -1349,7 +1349,7 @@ def read_from_csv(csv_file_path: str) -> tuple[np.ndarray, np.ndarray]:
 
     Args:
         csv_file_path (str): The path to the CSV file."
-py|"https://py3.codeskulptor.org/#user303_YDfQIzNmMqK1ppL_2.py
+py|https://py3.codeskulptor.org/#user303_YDfQIzNmMqK1ppL_2.py
 
 from user303_7lDehNYviAM54hJ_23 import ObjectInteraction
 from user303_doHrN6Dhd15OnO7_7 import Object, Bullet
@@ -1378,14 +1378,14 @@ frame.set_draw_handler(draw)
 
 # Start the frame animation
 frame.start()
-"|Write a complete, standalone Python program that uses the simplegui library to create an interactive graphical application. The program must define a Vector class with x and y components and a getP method that returns the position as a tuple. Define an Object class that takes a frame (canvas dimensions) and an initial Vector position, and includes a draw method. Define a Bullet class that inherits from Object or uses an Object instance for its position, taking a target Object, frame, initial Vector position, and a Vector velocity, with its own draw method. Implement an ObjectInteraction class that initializes with a main Object and manages a list of Bullet objects, providing methods to add bullets and to draw all managed objects on the simplegui canvas. The main program should initialize a simplegui frame with dimensions 540x800, create an Object instance, a Bullet instance with a specific position and velocity, add the bullet to an ObjectInteraction instance, and set a draw handler that calls the ObjectInteraction's draw method and prints the bullet's current position to the console in each frame update. Finally, start the simplegui frame animation.|"# Assume simplegui is available, e.g., from CodeSkulptor or a local simplegui.py file.
+|Write a complete, standalone Python program that uses the simplegui library to create an interactive graphical application. The program must define a Vector class with x and y components and a getP method that returns the position as a tuple. Define an Object class that takes a frame (canvas dimensions) and an initial Vector position, and includes a draw method. Define a Bullet class that inherits from Object or uses an Object instance for its position, taking a target Object, frame, initial Vector position, and a Vector velocity, with its own draw method. Implement an ObjectInteraction class that initializes with a main Object and manages a list of Bullet objects, providing methods to add bullets and to draw all managed objects on the simplegui canvas. The main program should initialize a simplegui frame with dimensions 540x800, create an Object instance, a Bullet instance with a specific position and velocity, add the bullet to an ObjectInteraction instance, and set a draw handler that calls the ObjectInteraction's draw method and prints the bullet's current position to the console in each frame update. Finally, start the simplegui frame animation.|# Assume simplegui is available, e.g., from CodeSkulptor or a local simplegui.py file.
 # If running locally and simplegui is not installed, you might need to download
 # simplegui.py and place it in the same directory as this script.
 try:
     import simplegui
 except ImportError:
     print(""simplegui library not found."
-java|"package Learning.DSA_Assignment1;
+java|package Learning.DSA_Assignment1;
 
 public class Q2 {
 
@@ -1422,7 +1422,7 @@ public class Q2 {
         printArray(arr, 6);
     }
 }
-"|Write a complete Java program that defines a class named `ArrayOperations`. This class should contain two static methods: `reverseArray` and `printArray`. The `reverseArray` method must take an integer array, a starting index, and an ending index as parameters, and reverse the elements of the array in-place within the specified range. The `printArray` method must take an integer array and its size as parameters, and print all elements of the array on a single line, followed by a newline. The `main` method should initialize an integer array, print its original contents, then call `reverseArray` to reverse the entire array, print a message indicating the array is reversed, and finally print the contents of the reversed array.|"public class ArrayOperations {
+|Write a complete Java program that defines a class named `ArrayOperations`. This class should contain two static methods: `reverseArray` and `printArray`. The `reverseArray` method must take an integer array, a starting index, and an ending index as parameters, and reverse the elements of the array in-place within the specified range. The `printArray` method must take an integer array and its size as parameters, and print all elements of the array on a single line, followed by a newline. The `main` method should initialize an integer array, print its original contents, then call `reverseArray` to reverse the entire array, print a message indicating the array is reversed, and finally print the contents of the reversed array.|public class ArrayOperations {
 
     /**
      * Reverses the elements of an integer array in-place within the specified range.
@@ -1431,7 +1431,7 @@ public class Q2 {
      * @param start The starting index of the range (inclusive).
      * @param end   The ending index of the range (inclusive).
      */"
-cpp|"#include <bits/stdc++.h>
+cpp|#include <bits/stdc++.h>
 using namespace std;
 struct node{
     int h[26],n,f;
@@ -1472,14 +1472,14 @@ int main(){
         else cout<<findi(B)<<""\n"";
     }
 }
-"|"Write a complete C++ program that implements a Trie (prefix tree) data structure. The program should read an integer N, representing the number of operations. Following N, it should process N lines of input. Each line will contain a command string and a data string. If the command string is ""add"", insert the data string into the Trie. If the command string is anything else, query the Trie for the number of previously added strings that have the data string as a prefix, and print this count followed by a newline character. The Trie should support lowercase English letters 'a' through 'z'. Initialize the Trie with a root node before processing any operations."|"#include <iostream> // Required for input/output operations (cin, cout)
+|Write a complete C++ program that implements a Trie (prefix tree) data structure. The program should read an integer N, representing the number of operations. Following N, it should process N lines of input. Each line will contain a command string and a data string. If the command string is ""add"", insert the data string into the Trie. If the command string is anything else, query the Trie for the number of previously added strings that have the data string as a prefix, and print this count followed by a newline character. The Trie should support lowercase English letters 'a' through 'z'. Initialize the Trie with a root node before processing any operations.|#include <iostream> // Required for input/output operations (cin, cout)
 #include <string>   // Required for string manipulation
 
 // Define the structure for a Trie node
 struct TrieNode {
     TrieNode* children[26]; // Array of pointers to child nodes (for 'a' through 'z')
     int prefix_count;       // Counts"
-py|"# Author:  ---
+py|# Author:  ---
 
 # Exercise 0
 # Sample progam
@@ -1505,7 +1505,7 @@ while True:
         print '\nThe sum of', first_num, '+', second_num, 'is equal to ', int(first_num) + int(second_num)
 
 print '\nThanks for using this tool!\n'
-"|Write a Python program that continuously prompts the user to enter two integers. After receiving both integers, the program should calculate and print their sum. The program must allow the user to type the word 'done' (case-sensitive, without quotes) at the prompt for the first integer to terminate the loop. Upon exiting the loop, the program should print a thank you message. Ensure that user inputs are correctly converted to integers for calculation.|"import sys
+|Write a Python program that continuously prompts the user to enter two integers. After receiving both integers, the program should calculate and print their sum. The program must allow the user to type the word 'done' (case-sensitive, without quotes) at the prompt for the first integer to terminate the loop. Upon exiting the loop, the program should print a thank you message. Ensure that user inputs are correctly converted to integers for calculation.|import sys
 
 def main():
     """"""
@@ -1550,7 +1550,7 @@ def main():
 
 if __name__ == ""__main__"":
     main()"
-cpp|"#include <stdio.h>
+cpp|#include <stdio.h>
 int arr[50];
 void heap_sort(int n);
 void heapify(int n, int i);
@@ -1601,7 +1601,7 @@ void heapify(int n, int i)
         heapify(n, largest);
     }
 }
-"|Write a complete C++ program that implements the heap sort algorithm. The program should prompt the user to enter the number of elements, then prompt for each element to be stored in an array. After reading all elements, it must sort the array in ascending order using the heap sort algorithm. Finally, the program should print the sorted array to the console. The implementation should include a swap function, a heapify function, and the main heap sort function.|"#include <iostream> // Required for input/output operations (std::cout, std::cin, std::cerr)
+|Write a complete C++ program that implements the heap sort algorithm. The program should prompt the user to enter the number of elements, then prompt for each element to be stored in an array. After reading all elements, it must sort the array in ascending order using the heap sort algorithm. Finally, the program should print the sorted array to the console. The implementation should include a swap function, a heapify function, and the main heap sort function.|#include <iostream> // Required for input/output operations (std::cout, std::cin, std::cerr)
 #include <vector>   // Required for std::vector, a dynamic array container
 
 // Function to swap two integer values by reference
@@ -1640,7 +1640,7 @@ void heapify(std::vector<int>& arr, int n, int i) {
 // Main function to perform heap sort on a vector of integers
 void heapSort(std::vector<int>& arr) {
     int n = arr.size(); // Get the"
-java|"import java.util.Scanner;
+java|import java.util.Scanner;
 public class CircularQueueTest
 {
 	public static void main(String []args)
@@ -1686,7 +1686,7 @@ public class CircularQueueTest
 		}
 	}
 }	
-"|Write a complete Java program that implements a CircularQueue data structure. The program should consist of two classes: a CircularQueue class and a CircularQueueTest class. The CircularQueue class must have a constructor that takes the maximum size of the queue as an argument, an enQueue(int element) method to add elements, a deQueue() method to remove elements, and a display() method to print the current elements in the queue. The enQueue method should handle queue overflow by printing an appropriate message, and the deQueue method should handle queue underflow by printing an appropriate message and returning a sentinel value or indicating failure. The CircularQueueTest class should contain the main method. This main method will use java.util.Scanner to interact with the user, first prompting for the total number of elements the queue can hold. It will then initialize a CircularQueue object with the specified size. The program must present a menu-driven interface with the following options: 1 to push an element, 2 to pop an element, 3 to display the queue elements, and 4 to exit the program. The program should continuously loop, allowing the user to select options until option 4 is chosen. It must print descriptive messages for all user interactions and operations, including prompts for input, success messages, error messages for overflow and underflow, messages for invalid menu choices, and a final exit message.|"import java.util.Scanner;
+|Write a complete Java program that implements a CircularQueue data structure. The program should consist of two classes: a CircularQueue class and a CircularQueueTest class. The CircularQueue class must have a constructor that takes the maximum size of the queue as an argument, an enQueue(int element) method to add elements, a deQueue() method to remove elements, and a display() method to print the current elements in the queue. The enQueue method should handle queue overflow by printing an appropriate message, and the deQueue method should handle queue underflow by printing an appropriate message and returning a sentinel value or indicating failure. The CircularQueueTest class should contain the main method. This main method will use java.util.Scanner to interact with the user, first prompting for the total number of elements the queue can hold. It will then initialize a CircularQueue object with the specified size. The program must present a menu-driven interface with the following options: 1 to push an element, 2 to pop an element, 3 to display the queue elements, and 4 to exit the program. The program should continuously loop, allowing the user to select options until option 4 is chosen. It must print descriptive messages for all user interactions and operations, including prompts for input, success messages, error messages for overflow and underflow, messages for invalid menu choices, and a final exit message.|import java.util.Scanner;
 
 /**
  * Implements a Circular Queue data structure.
@@ -1696,7 +1696,7 @@ class CircularQueue {
     private int front;     // Index of the front element
     private int rear;      // Index of the rear element
     private int size;      // Current number of elements in the"
-java|"public class Final_10 {
+java|public class Final_10 {
 
     public static void func(int arr[],int left,int right){
         while(left<=right){
@@ -1730,14 +1730,14 @@ java|"public class Final_10 {
         dis(arr,n);
     }
 }
-"|Write a complete Java program. The program should define a class named ArrayPartitioner. This class must include a static method named partitionArray that takes an integer array, a left index, and a right index as arguments. This method should rearrange the elements of the array such that all negative numbers are moved to the beginning of the array and all positive numbers are moved to the end. The class must also include a static method named displayArray that takes an integer array and its size as arguments and prints the array elements separated by spaces, followed by a newline. The main method should initialize an integer array with a mix of positive and negative numbers, call the partitionArray method to reorder it, and then call the displayArray method to print the modified array.|"public class ArrayPartitioner {
+|Write a complete Java program. The program should define a class named ArrayPartitioner. This class must include a static method named partitionArray that takes an integer array, a left index, and a right index as arguments. This method should rearrange the elements of the array such that all negative numbers are moved to the beginning of the array and all positive numbers are moved to the end. The class must also include a static method named displayArray that takes an integer array and its size as arguments and prints the array elements separated by spaces, followed by a newline. The main method should initialize an integer array with a mix of positive and negative numbers, call the partitionArray method to reorder it, and then call the displayArray method to print the modified array.|public class ArrayPartitioner {
 
     /**
      * Rearranges the elements of the array such that all negative numbers are moved
      * to the beginning of the array and all non-negative numbers (positive and zero)
      * are moved to the end. The relative order of negative numbers among themselves
      * or non-negative numbers among themselves is not guaranteed."
-cpp|"void countSort(int arr[],int n){
+cpp|void countSort(int arr[],int n){
   int k=arr[0];
   for(int i=0;i<n;i++){
     k=max(k,arr[i]);
@@ -1757,13 +1757,13 @@ cpp|"void countSort(int arr[],int n){
     arr[i]=output[i];
   for(int i=0;i<n;i++)
     cout << arr[i];  
-}"|Write a complete C++ program that implements the Counting Sort algorithm. The program should define a function named countSort that takes an integer array and its size as input, sorts the array in non-decreasing order using Counting Sort, and then prints the sorted array elements to standard output. Include a main function that initializes an example integer array, calls countSort to sort it, and demonstrates the functionality.|"#include <iostream> // Required for input/output operations (std::cout, std::cerr, std::endl)
+}|Write a complete C++ program that implements the Counting Sort algorithm. The program should define a function named countSort that takes an integer array and its size as input, sorts the array in non-decreasing order using Counting Sort, and then prints the sorted array elements to standard output. Include a main function that initializes an example integer array, calls countSort to sort it, and demonstrates the functionality.|#include <iostream> // Required for input/output operations (std::cout, std::cerr, std::endl)
 #include <vector>   // Required for std::vector, a dynamic array
 #include <algorithm> // Required for std::max_element (though implemented manually here for clarity)
 
 /**
  * @brief Sorts an integer array in non-decreasing order"
-cpp|"#pragma once
+cpp|#pragma once
 #include ""CEO.h""
 #include ""Functions.h""
 struct HOD_NODE {
@@ -1874,7 +1874,7 @@ void HOD::hod_push_back(string name, int creadit) {
 		}
 	}
 }
-"|"Write a complete C++ program that implements an academic management system for a Head of Department (HOD). The program must include a HOD class responsible for managing semesters, subjects, and student credit hours. Define a HOD_NODE struct to represent subjects with a name and credit hours, forming a linked list within the HOD class. The HOD class should contain member variables for program name, password, semester details, and a static integer to store the student's total credit hours. Implement a login function for the HOD. Provide functionality to add new semesters, store and display lists of subjects, check for subject name repetitions, and manage subject data persistence using text files named after semesters (e.g., ""PROGRAMNAME SemesterNo.txt""). Include a function to set the maximum credit hours a student can take. The system must feature a menu-driven interface for the HOD, allowing actions such as adding semesters, displaying subjects, showing registered students (implement a placeholder for this functionality), setting credit hours, and exiting the program. Include a utility function to remove specific characters from strings. The program should use file I/O for loading and saving subject data and incorporate a basic CEO class as a dependency, even if its functionalities are not fully elaborated. Ensure proper memory management for the linked list. The main function should demonstrate the system's core features by allowing a HOD to log in and access the main menu."|"#include <iostream>
+|Write a complete C++ program that implements an academic management system for a Head of Department (HOD). The program must include a HOD class responsible for managing semesters, subjects, and student credit hours. Define a HOD_NODE struct to represent subjects with a name and credit hours, forming a linked list within the HOD class. The HOD class should contain member variables for program name, password, semester details, and a static integer to store the student's total credit hours. Implement a login function for the HOD. Provide functionality to add new semesters, store and display lists of subjects, check for subject name repetitions, and manage subject data persistence using text files named after semesters (e.g., ""PROGRAMNAME SemesterNo.txt""). Include a function to set the maximum credit hours a student can take. The system must feature a menu-driven interface for the HOD, allowing actions such as adding semesters, displaying subjects, showing registered students (implement a placeholder for this functionality), setting credit hours, and exiting the program. Include a utility function to remove specific characters from strings. The program should use file I/O for loading and saving subject data and incorporate a basic CEO class as a dependency, even if its functionalities are not fully elaborated. Ensure proper memory management for the linked list. The main function should demonstrate the system's core features by allowing a HOD to log in and access the main menu.|#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -1886,7 +1886,7 @@ void HOD::hod_push_back(string name, int creadit) {
 class CEO {
 public:
     // Constructor for CEO class"
-py|"#Stack Implementation Project
+py|#Stack Implementation Project
 class Stack:
 
 	def __init__(self):
@@ -1926,7 +1926,7 @@ print(""Popped: "", stack.pop())
 print(stack.sizeStack())
 print(""Peek:"", stack.peek())
 #peek will return 10, but size will remain the same so length of 1 is shown below
-print(stack.sizeStack())"|Write a complete Python program that defines a Stack class. The Stack class must include an __init__ method to initialize an empty list for storing elements. Implement the following methods: isEmpty, which returns True if the stack is empty and False otherwise; push(data), which adds data to the top of the stack; pop(), which removes and returns the top element following the LIFO principle; peek(), which returns the top element without removing it; and sizeStack(), which returns the current number of elements in the stack. After defining the class, provide example usage by creating a Stack instance, pushing at least three distinct integer values, printing the initial stack size, demonstrating two consecutive pop operations while printing the popped values, printing the stack size after pops, demonstrating a peek operation while printing the peeked value, and finally printing the stack size again to confirm that peek does not modify the stack's size.|"class Stack:
+print(stack.sizeStack())|Write a complete Python program that defines a Stack class. The Stack class must include an __init__ method to initialize an empty list for storing elements. Implement the following methods: isEmpty, which returns True if the stack is empty and False otherwise; push(data), which adds data to the top of the stack; pop(), which removes and returns the top element following the LIFO principle; peek(), which returns the top element without removing it; and sizeStack(), which returns the current number of elements in the stack. After defining the class, provide example usage by creating a Stack instance, pushing at least three distinct integer values, printing the initial stack size, demonstrating two consecutive pop operations while printing the popped values, printing the stack size after pops, demonstrating a peek operation while printing the peeked value, and finally printing the stack size again to confirm that peek does not modify the stack's size.|class Stack:
     """"""
     A simple implementation of a Stack data structure using a Python list.
     Follows the Last-In, First-Out (LIFO) principle.
@@ -2040,7 +2040,7 @@ if __name__ == ""__main__"":
     #     my_stack.pop()
     # except IndexError as e:
     #     print(f""Caught expected error: {e}"")"
-java|"class TowerOfHonoi{
+java|class TowerOfHonoi{
 	static int count=0;
 	static void tower(int n, char s, char inter, char d){
 		count++;
@@ -2057,7 +2057,7 @@ java|"class TowerOfHonoi{
 		tower(5,'A','B','C');
 		System.out.println(count);
 	}
-}"|Write a complete, standalone Java program that solves the Tower of Hanoi puzzle. Implement a recursive function to handle the movement of 'n' disks from a source peg to a destination peg using an intermediate peg. The program must print a message for each individual disk movement, specifying the disk number and the names of the source and destination pegs. Maintain a counter for the total number of moves performed and display this final count after the puzzle is solved. The main method should initiate the puzzle for 5 disks, moving them from peg 'A' to peg 'C', utilizing peg 'B' as the auxiliary.|"public class TowerOfHanoi {
+}|Write a complete, standalone Java program that solves the Tower of Hanoi puzzle. Implement a recursive function to handle the movement of 'n' disks from a source peg to a destination peg using an intermediate peg. The program must print a message for each individual disk movement, specifying the disk number and the names of the source and destination pegs. Maintain a counter for the total number of moves performed and display this final count after the puzzle is solved. The main method should initiate the puzzle for 5 disks, moving them from peg 'A' to peg 'C', utilizing peg 'B' as the auxiliary.|public class TowerOfHanoi {
 
     // Static variable to keep track of the total number of moves performed
     private static long moveCount = 0;
@@ -2105,7 +2105,7 @@ java|"class TowerOfHonoi{
         System.out.println(""Moving disks from Peg '"" + sourcePeg + ""' to Peg '"" + destinationPeg + ""' using Peg '"" + auxiliaryPeg + ""'.\n"");
 
         // Initiate"
-py|"import socket
+py|import socket
 import random
 
 
@@ -2157,7 +2157,7 @@ class TestClient(object):
         """"""Game 4: Highest total value wins, highest bidder pays second highest bid, auction order known.""""""
 
         # Currently just returns a random bid
-        return self.random_bid(standings[mybidderid]['money'])"|"Write a complete, standalone Python program that implements an auction client. The program must define a class named AuctionClient that handles connecting to an auction server, managing a unique bidder ID, and implementing various bidding strategies. The AuctionClient class should initialize with a host (defaulting to ""localhost""), port (defaulting to 8020), an optional mybidderid, and a verbose flag. It must establish a TCP socket connection to the specified host and port. If mybidderid is not provided during initialization, the client should prompt the user for input, ensuring the ID is not empty and does not contain any of the forbidden characters: spaces, single quote, double quote, comma, period, semicolon, colon, curly braces, square brackets, or parentheses. Implement a run method that continuously receives game state information from the server, decides on a bid using one of the strategy methods, and sends the bid back. Include a random_bid helper method that accepts a maximum bid amount and returns a random integer bid within that limit. Define four distinct bidding strategy methods: first_bidding_strategy, second_bidding_strategy, third_bidding_strategy, and fourth_bidding_strategy. Each strategy method must accept the following arguments: numberbidders, wincondition, artists, values, rd, itemsinauction, winnerarray, winneramount, mybidderid, players, standings, and winnerpays. Each strategy should implement intelligent bidding logic appropriate for its specific game rules, rather than simply returning a random bid. The game rules for each strategy are: first_bidding_strategy (Game 1: First to buy wincondition of any artist wins, highest bidder pays second highest bid, auction order not known), second_bidding_strategy (Game 2: First to buy wincondition of any artist wins, highest bidder pays own bid, auction order not known), third_bidding_strategy (Game 3: Highest total value wins, highest bidder pays own bid, auction order known), and fourth_bidding_strategy (Game 4: Highest total value wins, highest bidder pays second highest bid, auction order known). The program should include a main execution block that allows for instantiation and execution of the AuctionClient."|"import socket
+        return self.random_bid(standings[mybidderid]['money'])|Write a complete, standalone Python program that implements an auction client. The program must define a class named AuctionClient that handles connecting to an auction server, managing a unique bidder ID, and implementing various bidding strategies. The AuctionClient class should initialize with a host (defaulting to ""localhost""), port (defaulting to 8020), an optional mybidderid, and a verbose flag. It must establish a TCP socket connection to the specified host and port. If mybidderid is not provided during initialization, the client should prompt the user for input, ensuring the ID is not empty and does not contain any of the forbidden characters: spaces, single quote, double quote, comma, period, semicolon, colon, curly braces, square brackets, or parentheses. Implement a run method that continuously receives game state information from the server, decides on a bid using one of the strategy methods, and sends the bid back. Include a random_bid helper method that accepts a maximum bid amount and returns a random integer bid within that limit. Define four distinct bidding strategy methods: first_bidding_strategy, second_bidding_strategy, third_bidding_strategy, and fourth_bidding_strategy. Each strategy method must accept the following arguments: numberbidders, wincondition, artists, values, rd, itemsinauction, winnerarray, winneramount, mybidderid, players, standings, and winnerpays. Each strategy should implement intelligent bidding logic appropriate for its specific game rules, rather than simply returning a random bid. The game rules for each strategy are: first_bidding_strategy (Game 1: First to buy wincondition of any artist wins, highest bidder pays second highest bid, auction order not known), second_bidding_strategy (Game 2: First to buy wincondition of any artist wins, highest bidder pays own bid, auction order not known), third_bidding_strategy (Game 3: Highest total value wins, highest bidder pays own bid, auction order known), and fourth_bidding_strategy (Game 4: Highest total value wins, highest bidder pays second highest bid, auction order known). The program should include a main execution block that allows for instantiation and execution of the AuctionClient.|import socket
 import json
 import random
 import sys
@@ -2172,13 +2172,13 @@ class AuctionClient:
     FORBIDDEN_CHARS = "" ',.\"";:{}[]()""
 
     def __init__(self, host=""localhost"", port="
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 
 int main() {
     cout << ""Hello world"";
     return 0;
-}"|"Write a complete and standalone C++ program that prints the string ""Hello world"" to the console, followed by a newline character, and then exits successfully."|"#include <iostream> // Required for input/output operations, specifically std::cout
+}|Write a complete and standalone C++ program that prints the string ""Hello world"" to the console, followed by a newline character, and then exits successfully.|#include <iostream> // Required for input/output operations, specifically std::cout
 
 int main() {
     // Print the string ""Hello world"" to the console.
@@ -2188,7 +2188,7 @@ int main() {
     // Return 0 to indicate successful program execution.
     return 0;
 }"
-java|"JFIFxx""ExifMM*C		
+java|JFIFxx""ExifMM*C		
 
 
 
@@ -2200,7 +2200,7 @@ w!1AQaq""2B	#3Rbr
 ?KUZ_onlobI I j-;=4QE_t0{9>+]cs]G,=M0iU-*4QQw4rjwz&kn5H[x+dPGp]'Uy7HxnH.dHfhbe	kx'jZe-,Vl-KYcV6`v 
 ZlUK]4W}85/{[]]Ra_e> n5O[{^'bKFQ&7xxU}uVISKS5Rk^ktg,o;sJ`+SjZ-Y\@:E V*2q;>2d(R/i^C#<mf';>>.XA6:Hf!V1T=33,ve+
  ZxjN='FiJ13T*'o>{8?tuK0#r@SVVhO-K[F.MGuMXjZ<:(8NO""*t*GNevk?QN-dWQEuK?lP/_iVSU}d	Z<(1`MQY8;85f7e++yxZaN=gj_)ok
-wlCg6ArDI?:j^9;z	j31DO?gYym?6Z304yURjngZ	'G{h_'5_^,4m<qfD1""`:'-WEj]VKmi('ve`+`(((("|Write a complete, standalone Java program that prompts the user to enter their name, reads the input from the console, and then prints a personalized greeting message back to the user. The program should include basic error handling for input operations.|"import java.util.Scanner; // Import the Scanner class for reading user input
+wlCg6ArDI?:j^9;z	j31DO?gYym?6Z304yURjngZ	'G{h_'5_^,4m<qfD1""`:'-WEj]VKmi('ve`+`((((|Write a complete, standalone Java program that prompts the user to enter their name, reads the input from the console, and then prints a personalized greeting message back to the user. The program should include basic error handling for input operations.|import java.util.Scanner; // Import the Scanner class for reading user input
 
 /**
  * A simple Java program that prompts the user for their name,
@@ -2243,7 +2243,7 @@ public class GreetingProgram {
         }
     }
 }"
-java|"package linearsearchdsa;
+java|package linearsearchdsa;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -2283,7 +2283,7 @@ public class LinearSearchDSA {
     }
 }
     }}
-"|Write a complete standalone Java program that implements a linear search algorithm. The program must prompt the user to enter the desired size of an integer array. Then, it should prompt the user to input each integer element for the array. After the array is populated, the program must prompt the user to enter the specific integer value they wish to search for within the array. The program should then perform a linear search. If the target integer is found, it must print a message indicating the found integer and its 1-based index (location) in the array. If the integer is not found after iterating through the entire array, the program must print a message stating that the integer is not present in the array.|"import java.util.InputMismatchException;
+|Write a complete standalone Java program that implements a linear search algorithm. The program must prompt the user to enter the desired size of an integer array. Then, it should prompt the user to input each integer element for the array. After the array is populated, the program must prompt the user to enter the specific integer value they wish to search for within the array. The program should then perform a linear search. If the target integer is found, it must print a message indicating the found integer and its 1-based index (location) in the array. If the integer is not found after iterating through the entire array, the program must print a message stating that the integer is not present in the array.|import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -2361,7 +2361,7 @@ public class LinearSearch {
         int[] arr = new int[size]; // Create an array of the specified size
         System.out.println(""Enter "" + size + "" integer elements for the array:"");
         for"
-java|"import java.util.*;
+java|import java.util.*;
 public class addStrings {
     public static void main(String[] args)
     {
@@ -2395,7 +2395,7 @@ public class addStrings {
         return ans.reverse().toString();
     }
 }
-"|"Write a complete standalone Java program. Define a class named addStrings. Implement a public static method addValues within this class that accepts two string arguments, num1 and num2, representing non-negative integers. The method must calculate the sum of these two numbers as if they were large integers and return the result as a string. The program must also include a main method that demonstrates the addValues method by adding ""9"" and ""1"" and printing the result to the console."|"// Define a class named addStrings
+|Write a complete standalone Java program. Define a class named addStrings. Implement a public static method addValues within this class that accepts two string arguments, num1 and num2, representing non-negative integers. The method must calculate the sum of these two numbers as if they were large integers and return the result as a string. The program must also include a main method that demonstrates the addValues method by adding ""9"" and ""1"" and printing the result to the console.|// Define a class named addStrings
 class addStrings {
 
     /**
@@ -2486,7 +2486,7 @@ class addStrings {
         System.out.println(""Sum of \"""" + num9 + ""\"" and \"""" + num10 + ""\"" is: "" + sum5); // Expected: 111111111011111111100
     }
 }"
-py|"https://py3.codeskulptor.org/#user303_GnH7HqTBYrrQ0sc.py
+py|https://py3.codeskulptor.org/#user303_GnH7HqTBYrrQ0sc.py
 
 import simplegui
 from user303_kSTZlFLATQpphpA_2 import * # Welcome - Done to convention 
@@ -2569,7 +2569,7 @@ frame.set_keydown_handler(Game.Keyboard.keyDown)
 frame.set_keyup_handler(Game.Keyboard.keyUp)
 
 frame.start()
-"|Write a complete 2D arcade-style game using the simplegui library. The game must feature a welcome screen, a main gameplay screen, and a game over screen. Implement a player character with movement and shooting capabilities, controlled by keyboard input. Include enemy sprites that interact with the player, affecting a health bar and contributing to a score. The game should manage state transitions between screens: from welcome to main game, from main game to game over upon player death, and from game over back to welcome or main game for replay. Implement a game loop that handles drawing, updates game logic, and processes keyboard events. Ensure all game components reset correctly when restarting the game.|"```python
+|Write a complete 2D arcade-style game using the simplegui library. The game must feature a welcome screen, a main gameplay screen, and a game over screen. Implement a player character with movement and shooting capabilities, controlled by keyboard input. Include enemy sprites that interact with the player, affecting a health bar and contributing to a score. The game should manage state transitions between screens: from welcome to main game, from main game to game over upon player death, and from game over back to welcome or main game for replay. Implement a game loop that handles drawing, updates game logic, and processes keyboard events. Ensure all game components reset correctly when restarting the game.|```python
 # Import the simplegui module. This handles both CodeSkulptor and local Pygame environments.
 try:
     import simplegui
@@ -2581,7 +2581,7 @@ import math
 # --- Game Constants ---
 WIDTH = 800
 HEIGHT = 600"
-py|"'''
+py|'''
  Author:  ---
 
  Exercise 00.5
@@ -2653,7 +2653,7 @@ for pword in passwords_list:
     else:
         continue
 
-print '\n ---end of the process---\n'"|"Write a complete Python program that validates a list of user-provided passwords. The program should first prompt the user to ""Please enter the list of the passwords to be checked, separated by comma"". It should then read a comma-separated string of passwords. For each password, it must apply the following validation rules: 1. The password must contain at least one lowercase letter (a-z). 2. The password must contain at least one digit (0-9). 3. The password must contain at least one uppercase letter (A-Z). 4. The password must contain at least one special character from the set: space, hash (#), or at sign (@). 5. The password must have a minimum length of 6 characters. 6. The password must have a maximum length of 12 characters. After processing all passwords, the program should print the message ""The following are the passwords that have been accepted:"". Subsequently, it should list each accepted password, preceded by ""->"". Finally, it should print ""---end of the process---"". The program must be fully functional and handle input correctly."|"import re
+print '\n ---end of the process---\n'|Write a complete Python program that validates a list of user-provided passwords. The program should first prompt the user to ""Please enter the list of the passwords to be checked, separated by comma"". It should then read a comma-separated string of passwords. For each password, it must apply the following validation rules: 1. The password must contain at least one lowercase letter (a-z). 2. The password must contain at least one digit (0-9). 3. The password must contain at least one uppercase letter (A-Z). 4. The password must contain at least one special character from the set: space, hash (#), or at sign (@). 5. The password must have a minimum length of 6 characters. 6. The password must have a maximum length of 12 characters. After processing all passwords, the program should print the message ""The following are the passwords that have been accepted:"". Subsequently, it should list each accepted password, preceded by ""->"". Finally, it should print ""---end of the process---"". The program must be fully functional and handle input correctly.|import re
 
 def validate_password(password: str) -> bool:
     """"""
@@ -2724,7 +2724,7 @@ def main():
 
 if __name__ == ""__main__"":
     main()"
-py|"# -*- coding: utf-8 -*-
+py|# -*- coding: utf-8 -*-
 """"""
 Created on Wed Oct 31 18:38:29 2018
 
@@ -2738,7 +2738,7 @@ from nltk.corpus import sentiwordnet as swn
 words = ['good', 'great', 'bad', 'terrible', 'happy', 'cruel']
 # looping into the list of words and printing the sentiment
 for elem in words:
-    print '\nfor word', elem, 'sentiment is', swn.senti_synset(elem + '.a.02')"|Write a complete standalone Python program that uses the NLTK SentiWordNet corpus to calculate and display the sentiment scores for a predefined list of words. The program should define a list of words, then iterate through each word, retrieve its sentiment as an adjective (e.g., using the '.a.02' suffix), and print the word along with its positive, negative, and objective sentiment scores. Ensure all necessary NLTK data is downloaded if not already present.|"import nltk
+    print '\nfor word', elem, 'sentiment is', swn.senti_synset(elem + '.a.02')|Write a complete standalone Python program that uses the NLTK SentiWordNet corpus to calculate and display the sentiment scores for a predefined list of words. The program should define a list of words, then iterate through each word, retrieve its sentiment as an adjective (e.g., using the '.a.02' suffix), and print the word along with its positive, negative, and objective sentiment scores. Ensure all necessary NLTK data is downloaded if not already present.|import nltk
 from nltk.corpus import sentiwordnet as swn
 from nltk.corpus import wordnet as wn # wordnet is a dependency for sentiwordnet
 
@@ -2748,7 +2748,7 @@ def download_nltk_data():
     Exits the program if data cannot be downloaded.
     """"""
     try:"
-py|"import socket
+py|import socket
 import random
 
 
@@ -2823,7 +2823,7 @@ class AuctionClient(object):
                 self.aggression *= 1.1
         
         self.roundBids[rd] *= self.aggression
-        return int(value * self.aggression)"|Write a complete, standalone Python program that defines an AuctionClient class. The AuctionClient class must initialize with parameters for host, port, an optional bidder ID (with validation to prevent forbidden characters like spaces or punctuation), verbose mode, scaleUp, scaleDown, and aggression. The constructor must establish a TCP socket connection to the specified host and port. Implement a random_bidding_strategy method that returns a random integer bid between 1 and a given budget. Implement a first_bidding_strategy method that takes auction state parameters including number of bidders, win condition, artists, item values, current round, items in auction, winner array, winner amount, bidder ID, players, standings, and winner pays. This strategy should calculate artist valuations, adjust a 'lenience' factor based on past bidding outcomes (wins or losses), and determine a bid for the current item in auction. Finally, implement a bidding_strategy method that orchestrates the bidding process. This method should call the first_bidding_strategy internally and then adjust the resulting bid based on the client's 'aggression' factor. The aggression factor should increase if the client lost the previous round and reset if the client won. The program should include a main execution block that demonstrates how to instantiate the AuctionClient and call its bidding strategy methods, simulating participation in an auction.|"import socket
+        return int(value * self.aggression)|Write a complete, standalone Python program that defines an AuctionClient class. The AuctionClient class must initialize with parameters for host, port, an optional bidder ID (with validation to prevent forbidden characters like spaces or punctuation), verbose mode, scaleUp, scaleDown, and aggression. The constructor must establish a TCP socket connection to the specified host and port. Implement a random_bidding_strategy method that returns a random integer bid between 1 and a given budget. Implement a first_bidding_strategy method that takes auction state parameters including number of bidders, win condition, artists, item values, current round, items in auction, winner array, winner amount, bidder ID, players, standings, and winner pays. This strategy should calculate artist valuations, adjust a 'lenience' factor based on past bidding outcomes (wins or losses), and determine a bid for the current item in auction. Finally, implement a bidding_strategy method that orchestrates the bidding process. This method should call the first_bidding_strategy internally and then adjust the resulting bid based on the client's 'aggression' factor. The aggression factor should increase if the client lost the previous round and reset if the client won. The program should include a main execution block that demonstrates how to instantiate the AuctionClient and call its bidding strategy methods, simulating participation in an auction.|import socket
 import random
 import string
 import re
@@ -2839,7 +2839,7 @@ class AuctionClient:
     """"""
 
     def __"
-java|"import java.util.*;
+java|import java.util.*;
  
 public class EvaluateExpressionUsingStacks 
 {
@@ -2922,7 +2922,7 @@ public class EvaluateExpressionUsingStacks
         }    
         System.out.println(""\nResult = ""+val.pop());        
     }
-}"|Write a complete Java program that evaluates an arithmetic expression provided by the user. The program must use two stacks: one for operands (numbers) and one for operators. It should parse the input expression, correctly handle operator precedence for addition, subtraction, multiplication, and division, and output the final numerical result. The program should prompt the user to enter an expression and then display the calculated value.|"import java.util.Scanner;
+}|Write a complete Java program that evaluates an arithmetic expression provided by the user. The program must use two stacks: one for operands (numbers) and one for operators. It should parse the input expression, correctly handle operator precedence for addition, subtraction, multiplication, and division, and output the final numerical result. The program should prompt the user to enter an expression and then display the calculated value.|import java.util.Scanner;
 import java.util.Stack;
 
 /**
@@ -2934,7 +2934,7 @@ public class ExpressionEvaluator {
 
     /**
      *"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 
 int swap(int *x,int *y)
@@ -2979,7 +2979,7 @@ int main()
 	cout<<""The sorted array is : "";
 	printArray(arr,n);
 }
-"|Write a complete C++ program that implements the selection sort algorithm. The program should include a function to swap two integers using pointers, a function to perform selection sort on an integer array, and a function to print the elements of an integer array. In the main function, declare an integer array, initialize it with sample values, sort the array using the selection sort function, and then print the sorted array to the console.|"#include <iostream> // Required for input/output operations
+|Write a complete C++ program that implements the selection sort algorithm. The program should include a function to swap two integers using pointers, a function to perform selection sort on an integer array, and a function to print the elements of an integer array. In the main function, declare an integer array, initialize it with sample values, sort the array using the selection sort function, and then print the sorted array to the console.|#include <iostream> // Required for input/output operations
 
 // Function to swap two integers using pointers
 // Parameters:
@@ -3034,7 +3034,7 @@ int main() {
     int arr[] = {64, 25, 12, 22, 11, 90, 7};
     // Calculate the number of elements in the array
     // sizeof(arr) gives the total size of"
-java|"/* package codechef; // don't place package name! */
+java|/* package codechef; // don't place package name! */
 
 import java.util.*;
 import java.lang.*;
@@ -3077,7 +3077,7 @@ class Codechef
 	    return flag==1;
 	}
 }
-"|"Write a complete Java program that reads an integer N from standard input, representing the number of test cases. For each test case, the program must read a single string. For each string, determine if it is a ""Lapindrome"". A string is considered a Lapindrome if, after ignoring its middle character (if the string has an odd length), all remaining characters in the string appear an even number of times. The program should print ""YES"" to standard output if the string is a Lapindrome, and ""NO"" otherwise. Ensure the program uses BufferedReader for input."|"import java.io.BufferedReader;
+|Write a complete Java program that reads an integer N from standard input, representing the number of test cases. For each test case, the program must read a single string. For each string, determine if it is a ""Lapindrome"". A string is considered a Lapindrome if, after ignoring its middle character (if the string has an odd length), all remaining characters in the string appear an even number of times. The program should print ""YES"" to standard output if the string is a Lapindrome, and ""NO"" otherwise. Ensure the program uses BufferedReader for input.|import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
@@ -3088,7 +3088,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         // Read the"
-java|"import java.util.*;
+java|import java.util.*;
 class ksmall{
     public static int kthSmallest(int[] arr, int l, int r, int k) 
     { 
@@ -3097,7 +3097,7 @@ class ksmall{
         return arr[k-1];
     } 
 }
-"|Write a complete, standalone Java program that defines a method to find the k-th smallest element in an unsorted integer array. The method should accept an integer array, a left index, a right index, and an integer k as parameters. The program must include a main method to demonstrate the functionality by creating an example array, calling the k-th smallest element method, and printing the returned value to the console.|"```java
+|Write a complete, standalone Java program that defines a method to find the k-th smallest element in an unsorted integer array. The method should accept an integer array, a left index, a right index, and an integer k as parameters. The program must include a main method to demonstrate the functionality by creating an example array, calling the k-th smallest element method, and printing the returned value to the console.|```java
 import java.util.Random;
 
 /**
@@ -3198,7 +3198,7 @@ public class KthSmallestElement {
     private static void swap(int[] arr, int i, int j) {
         if (i == j) {
             return; // No need to"
-py|"# -*- coding: utf-8 -*-
+py|# -*- coding: utf-8 -*-
 """"""
 Created on Tue Oct 16 18:17:47 2018
 
@@ -3300,7 +3300,7 @@ sort = sorted(dic.values(), reverse = True)
 print sort[:10]
 print ""Average occurances of a word are:""
 print ""\nLongest word is:"", _maxlength
-print ""\naverage word length ="", average_word_len"|"Write a Python program that performs the following four distinct tasks:
+print ""\naverage word length ="", average_word_len|Write a Python program that performs the following four distinct tasks:
 
 1.  **String Manipulation:** Prompt the user to enter a string. Iterate through each character of the input string. For each character, create a new string by appending that character twice to an accumulating result string. Finally, print the resulting string.
 2.  **File Analysis - Average Word Length:** Read a file named ""word_list.csv"". Assume this file contains words separated by commas on each line. For each line, split the line into individual words, convert them to lowercase, and strip any leading/trailing whitespace. Calculate the total length of all words and the total count of all words encountered. After processing the entire file, calculate and print the average length of the words.
@@ -3325,7 +3325,7 @@ print ""\naverage word length ="", average_word_len"|"Write a Python program tha
     *   Finally, print:
         *   The top 10 most frequent words (their counts).
         *   The longest word.
-        *   The average word length."|"import re
+        *   The average word length.|import re
 import collections
 import os
 
@@ -3406,7 +3406,7 @@ def character_validation_vowel_check_task():
                 print('Invalid input.')
             elif not user_input.isalpha():
                 print('Invalid input.') # Catches"
-cpp|"//============================================================================
+cpp|//============================================================================
 // Name        : pinnacle.cpp
 // Author      : Shubham Rekkawar
 // Version     :
@@ -3584,7 +3584,7 @@ public:
 	return 0;
 }
 
-"|Write a complete, standalone C++ program. Define a node class with members for an integer ID (PRN) and a string name, along with a pointer to the next node. Implement a Pinnacle class that manages a singly linked list of these nodes. The Pinnacle class should include a constructor to initialize an empty list, a method to return the head of the list, a method to add new members (President at the front, Member at a general position, Secretary at the end), a method to display all members, a method to count the total number of members, a method to delete members (President from the front, a specific Member by ID, or Secretary from the end), a recursive method to reverse the list and display its contents in reverse order, a method to traverse the list (e.g., to check for duplicates during insertion), and a method to concatenate two Pinnacle lists into a third new Pinnacle list. The main function should provide a menu-driven interface allowing the user to interact with two separate Pinnacle lists. The menu should offer options to insert members (President, Member, Secretary), display the list, get the member count, delete members (President, Member by ID, Secretary), and reverse the list for either of the two initial lists. Finally, the program should allow the user to concatenate the two initial lists into a third list and then display the concatenated list. Ensure the program handles user input, provides clear output, and manages memory correctly.|"```cpp
+|Write a complete, standalone C++ program. Define a node class with members for an integer ID (PRN) and a string name, along with a pointer to the next node. Implement a Pinnacle class that manages a singly linked list of these nodes. The Pinnacle class should include a constructor to initialize an empty list, a method to return the head of the list, a method to add new members (President at the front, Member at a general position, Secretary at the end), a method to display all members, a method to count the total number of members, a method to delete members (President from the front, a specific Member by ID, or Secretary from the end), a recursive method to reverse the list and display its contents in reverse order, a method to traverse the list (e.g., to check for duplicates during insertion), and a method to concatenate two Pinnacle lists into a third new Pinnacle list. The main function should provide a menu-driven interface allowing the user to interact with two separate Pinnacle lists. The menu should offer options to insert members (President, Member, Secretary), display the list, get the member count, delete members (President, Member by ID, Secretary), and reverse the list for either of the two initial lists. Finally, the program should allow the user to concatenate the two initial lists into a third list and then display the concatenated list. Ensure the program handles user input, provides clear output, and manages memory correctly.|```cpp
 #include <iostream>
 #include <string>
 #include <limits> // Required for numeric_limits
@@ -3597,7 +3597,7 @@ class Node {
 public:
     int PRN;          // Unique identifier for the member
     std::string name"
-java|"package ALGOAPP.Algos;
+java|package ALGOAPP.Algos;
 
 public class Linear_Search {
     public static int linearSearch(int arr[], int target) {
@@ -3608,7 +3608,7 @@ public class Linear_Search {
         return -1;
     }
 
-}"|Write a complete standalone Java program that implements the linear search algorithm. The program should define a public static method named linearSearch that takes an integer array and an integer target value as input. This method must iterate through the array to find the target element. If the target is found, the method should return the index of the first occurrence of the target. If the target is not found after checking all elements, the method should return -1. Include a main method to demonstrate the linearSearch functionality with at least two different test cases, printing the input array, the target value, and the search result for each case.|"public class LinearSearchProgram {
+}|Write a complete standalone Java program that implements the linear search algorithm. The program should define a public static method named linearSearch that takes an integer array and an integer target value as input. This method must iterate through the array to find the target element. If the target is found, the method should return the index of the first occurrence of the target. If the target is not found after checking all elements, the method should return -1. Include a main method to demonstrate the linearSearch functionality with at least two different test cases, printing the input array, the target value, and the search result for each case.|public class LinearSearchProgram {
 
     /**
      * Implements the linear search algorithm to find a target value in an integer array.
@@ -3667,7 +3667,7 @@ public class Linear_Search {
         System.out.println();
 
         // Test Case 4: Target found at the"
-py|"import numpy as np, random, operator, matplotlib.pyplot as plt
+py|import numpy as np, random, operator, matplotlib.pyplot as plt
 from math import sqrt
 
 class City:
@@ -3683,7 +3683,7 @@ class City:
         return distance
 
     def toString(self):
-        return ""City at "" + str(self.pos)"|Write a complete standalone Python program that defines a City class. The City class must have an initializer that accepts a unique identifier, an x-coordinate, and a y-coordinate, storing these as attributes. Implement a method within the City class to calculate and return the Euclidean distance between the current city instance and another City object passed as an argument. Additionally, include a method that returns a string representation of the city's coordinates. The program should correctly import and utilize the numpy library for distance calculations.|"import numpy as np
+        return ""City at "" + str(self.pos)|Write a complete standalone Python program that defines a City class. The City class must have an initializer that accepts a unique identifier, an x-coordinate, and a y-coordinate, storing these as attributes. Implement a method within the City class to calculate and return the Euclidean distance between the current city instance and another City object passed as an argument. Additionally, include a method that returns a string representation of the city's coordinates. The program should correctly import and utilize the numpy library for distance calculations.|import numpy as np
 
 class City:
     """"""
@@ -3797,7 +3797,7 @@ if __name__ == ""__main__"":
 
     except Exception as e:
         print(f""An unexpected error occurred: {e}"")"
-java|"import java.util.*;
+java|import java.util.*;
 class P_queue{
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
@@ -3896,7 +3896,7 @@ class p_queueApp{
 		return(a[--c]);
 			}
 	}
-}                                                                                                          "|Write a complete Java program that implements a custom priority queue with a fixed capacity of 5 integers. The program must define a class for the priority queue that includes methods to check if the queue is empty, check if the queue is full, add an element (enqueue) while maintaining ascending order where the smallest value has the highest priority, and remove the highest priority element (dequeue). The main method should provide a menu-driven console application that allows the user to interact with the priority queue. The menu should present options to check if the queue is empty, check if it's full, enqueue a value, dequeue a value, or exit the program. The program should continuously display the menu and process user choices until the exit option is selected. Provide appropriate console output messages for each operation, including when the queue is full or empty during enqueue or dequeue attempts.|"```java
+}                                                                                                          |Write a complete Java program that implements a custom priority queue with a fixed capacity of 5 integers. The program must define a class for the priority queue that includes methods to check if the queue is empty, check if the queue is full, add an element (enqueue) while maintaining ascending order where the smallest value has the highest priority, and remove the highest priority element (dequeue). The main method should provide a menu-driven console application that allows the user to interact with the priority queue. The menu should present options to check if the queue is empty, check if it's full, enqueue a value, dequeue a value, or exit the program. The program should continuously display the menu and process user choices until the exit option is selected. Provide appropriate console output messages for each operation, including when the queue is full or empty during enqueue or dequeue attempts.|```java
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -4021,8 +4021,8 @@ class CustomPriorityQueue {
 public class PriorityQueueApp {
     public static void main(String[] args) {
         final"
-py|"https://py3.codeskulptor.org/#user303_PVa6wUGRkI_1.py
-"|Write a complete Python program that implements a two-player Pong game. The game should feature a ball bouncing off the top and bottom walls, and two paddles controlled by players on the left and right sides of the screen. When the ball goes past a paddle, the opposing player scores a point, and a new ball is spawned from the center, moving towards the scoring player's side. The ball's horizontal velocity should increase each time it hits a paddle. Implement keyboard controls for paddle movement: 'w' and 's' keys for the left paddle, and the 'up' and 'down' arrow keys for the right paddle. The paddles should not be able to move off-screen. Display the scores for both players on the screen. The program must use the `simplegui` library for graphics and user interaction, creating a frame with a specified width and height, and handling drawing, key presses, and key releases. Initialize the game with paddle positions centered, scores at zero, and a randomly directed ball.|"import simplegui
+py|https://py3.codeskulptor.org/#user303_PVa6wUGRkI_1.py
+|Write a complete Python program that implements a two-player Pong game. The game should feature a ball bouncing off the top and bottom walls, and two paddles controlled by players on the left and right sides of the screen. When the ball goes past a paddle, the opposing player scores a point, and a new ball is spawned from the center, moving towards the scoring player's side. The ball's horizontal velocity should increase each time it hits a paddle. Implement keyboard controls for paddle movement: 'w' and 's' keys for the left paddle, and the 'up' and 'down' arrow keys for the right paddle. The paddles should not be able to move off-screen. Display the scores for both players on the screen. The program must use the `simplegui` library for graphics and user interaction, creating a frame with a specified width and height, and handling drawing, key presses, and key releases. Initialize the game with paddle positions centered, scores at zero, and a randomly directed ball.|import simplegui
 import random
 
 # Global constants
@@ -4034,7 +4034,7 @@ PAD_HEIGHT = 80
 HALF_PAD_WIDTH = PAD_WIDTH / 2
 HALF_PAD_HEIGHT = PAD_HEIGHT / 2
 PADDLE_VEL_INC ="
-py|"import time
+py|import time
 import pandas as pd
 from sklearn.manifold import TSNE
 
@@ -4047,7 +4047,7 @@ tsne_results = tsne.fit_transform(cuisine_data.iloc[:,2:len(cuisine_data.columns
 print 't-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start)
 
 #https://medium.com/@luckylwk/visualising-high-dimensional-datasets-using-pca-and-t-sne-in-python-8ef87e7915b
-"|Write a complete Python program that performs the following steps: Load a CSV file named 'processed_cuisine_data_3.csv' into a pandas DataFrame. Apply t-SNE dimensionality reduction to the DataFrame, using all columns from the third column (index 2) through the last column as input features. Configure the t-SNE model with 2 components, verbose output enabled, a perplexity of 20, and 300 iterations. Measure the execution time of the t-SNE transformation process. Finally, print the elapsed time in seconds upon completion of the t-SNE operation, using a descriptive message like 't-SNE done! Time elapsed: X seconds'.|"import pandas as pd
+|Write a complete Python program that performs the following steps: Load a CSV file named 'processed_cuisine_data_3.csv' into a pandas DataFrame. Apply t-SNE dimensionality reduction to the DataFrame, using all columns from the third column (index 2) through the last column as input features. Configure the t-SNE model with 2 components, verbose output enabled, a perplexity of 20, and 300 iterations. Measure the execution time of the t-SNE transformation process. Finally, print the elapsed time in seconds upon completion of the t-SNE operation, using a descriptive message like 't-SNE done! Time elapsed: X seconds'.|import pandas as pd
 import time
 from sklearn.manifold import TSNE
 
@@ -4087,7 +4087,7 @@ except KeyError as e:
     print(f""Error: A column specified for t-SNE was not found. Details: {e}"")
 except Exception as e:
     print(f""An unexpected error occurred: {e}"")"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 int main()
 {
@@ -4108,7 +4108,7 @@ int main()
     }
    
     
-}"|"Write a complete C++ program that prompts the user to enter a positive integer. The program must then determine if the entered number is a prime number. A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. The program should print ""Prime"" if the number is prime, and ""Not prime"" otherwise. Ensure the program correctly handles input values including 1 and 2."|"#include <iostream>
+}|Write a complete C++ program that prompts the user to enter a positive integer. The program must then determine if the entered number is a prime number. A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself. The program should print ""Prime"" if the number is prime, and ""Not prime"" otherwise. Ensure the program correctly handles input values including 1 and 2.|#include <iostream>
 #include <cmath> // Required for sqrt function
 
 int main() {
@@ -4162,7 +4162,7 @@ int main() {
 
     return 0; // Indicate successful execution
 }"
-cpp|"#include<iostream>
+cpp|#include<iostream>
 using namespace std;
 int main(){
 
@@ -4174,7 +4174,7 @@ cin>>amount2;
 int sum=amount1+amount2;
 cout<<sum;
     return 0;
-}"|Write a complete standalone C++ program that prompts the user to enter two integer values, reads both integers from standard input, calculates their sum, and then prints the sum to standard output.|"#include <iostream> // Required for input/output operations (cin, cout)
+}|Write a complete standalone C++ program that prompts the user to enter two integer values, reads both integers from standard input, calculates their sum, and then prints the sum to standard output.|#include <iostream> // Required for input/output operations (cin, cout)
 #include <limits>   // Required for numeric_limits to clear input buffer
 
 int main() {
