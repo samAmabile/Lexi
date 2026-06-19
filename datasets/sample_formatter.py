@@ -6,7 +6,7 @@ output_tsv_filename = "beautiful_git_sample.tsv"
 
 df = pd.read_csv("paired_data_master.csv")
 
-sample = df.head(200)
+sample = df.head(50)
 
 sample.to_csv(sample_filename, sep='|', index=False)
 
